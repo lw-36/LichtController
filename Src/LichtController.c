@@ -12,6 +12,8 @@ Input_t Input2;
 Input_t Input3;
 Input_t Input4;
 
+OperationStates_t operationState = Normal;
+
 /***************Functions***************/
 void ConfigInputs(void)
 {
@@ -39,10 +41,10 @@ void setInputRange(Input_t* Input)
 	HAL_Delay(50);
 	do
 	{
-		if(Input->unscaledValue < Input->minValue)
-			Input->minValue = Input->unscaledValue;
-		if(Input->unscaledValue > Input->maxValue)
-			Input->maxValue = Input->unscaledValue;
+		if(Input->unscaledValue < Input->minValue + INPUT_TOLERANCE)
+			Input->minValue = Input->unscaledValue + INPUT_TOLERANCE;
+		if(Input->unscaledValue > Input->maxValue - INPUT_TOLERANCE)
+			Input->maxValue = Input->unscaledValue - INPUT_TOLERANCE;
 		HAL_Delay(1);
 	}while(HAL_GPIO_ReadPin(UserButton1_GPIO_Port, UserButton1_Pin) == GPIO_PIN_RESET);
 	return;

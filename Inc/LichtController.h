@@ -45,7 +45,7 @@ typedef struct
 	uint16_t minValue;
 	uint16_t maxValue;
 	uint16_t unscaledValue;
-	uint16_t Value;
+	int16_t Value;
 	LowLevelInput_t LLInput;
 }Input_t;
 
@@ -56,8 +56,9 @@ typedef enum
 	SetOutputs
 }OperationStates_t;
 
-#define INPUT_SCALED_RANGE 4096
-#define OUTPUT_RANGE 65536
+#define INPUT_SCALED_RANGE	4095			//Max 32767
+#define INPUT_TOLERANCE			3
+#define OUTPUT_RANGE				65535			//Max 65535
 
 /***************Variables***************/
 extern Input_t Input1;

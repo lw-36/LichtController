@@ -148,11 +148,15 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	uint16_t i=0;
+	int32_t i=0;
   while (1)
   {
 		HAL_Delay(1);
-		i = Input1.Value * OUTPUT_RANGE / (INPUT_SCALED_RANGE + 16);
+		i = Input1.Value * OUTPUT_RANGE / (INPUT_SCALED_RANGE);
+		if(i < 0)
+			i = 0;
+		else if(i > OUTPUT_RANGE)
+			i = OUTPUT_RANGE;
 		TIM3->CCR1 = i;
 		TIM3->CCR2 = i;
 		TIM3->CCR3 = i;

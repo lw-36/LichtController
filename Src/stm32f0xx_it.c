@@ -184,7 +184,11 @@ void TIM1_CC_IRQHandler(void)
 			CurrentInput->LLInput.fallingEdge += 0x10000;
 		CurrentInput->unscaledValue = CurrentInput->LLInput.fallingEdge - CurrentInput->LLInput.risingEdge;
 		
-		CurrentInput->Value = (double)(CurrentInput->unscaledValue - CurrentInput->minValue) / (double)(CurrentInput->maxValue - CurrentInput->minValue) * (double)(INPUT_SCALED_RANGE );
+		CurrentInput->Value = (double)(CurrentInput->unscaledValue - CurrentInput->minValue) / (double)((CurrentInput->maxValue) - (CurrentInput->minValue)) * (double)(INPUT_SCALED_RANGE);
+			if(CurrentInput->Value < 0)
+				CurrentInput->Value = 0;
+			else if(CurrentInput->Value >= INPUT_SCALED_RANGE)
+				CurrentInput->Value = INPUT_SCALED_RANGE;
 	}
   /* USER CODE END TIM1_CC_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
