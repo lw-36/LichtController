@@ -86,39 +86,13 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
   /* USER CODE BEGIN HardFault_IRQn 0 */
-
+	__NOP();
   /* USER CODE END HardFault_IRQn 0 */
   while (1)
   {
     /* USER CODE BEGIN W1_HardFault_IRQn 0 */
     /* USER CODE END W1_HardFault_IRQn 0 */
   }
-}
-
-/**
-  * @brief This function handles System service call via SWI instruction.
-  */
-void SVC_Handler(void)
-{
-  /* USER CODE BEGIN SVC_IRQn 0 */
-
-  /* USER CODE END SVC_IRQn 0 */
-  /* USER CODE BEGIN SVC_IRQn 1 */
-
-  /* USER CODE END SVC_IRQn 1 */
-}
-
-/**
-  * @brief This function handles Pendable request for system service.
-  */
-void PendSV_Handler(void)
-{
-  /* USER CODE BEGIN PendSV_IRQn 0 */
-
-  /* USER CODE END PendSV_IRQn 0 */
-  /* USER CODE BEGIN PendSV_IRQn 1 */
-
-  /* USER CODE END PendSV_IRQn 1 */
 }
 
 /**
@@ -165,7 +139,7 @@ void TIM1_CC_IRQHandler(void)
 	Input_t* CurrentInput;
 	if(TIM_FLAG_CC1)
 	{
-		CurrentInput = &Input1;
+		CurrentInput = Input1;
 	}
 	
 	if(CurrentInput->LLInput.risingEdgeNext)
@@ -203,17 +177,79 @@ void TIM1_CC_IRQHandler(void)
 void TIM6_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM6_IRQn 0 */
-	const uint16_t blinkSlow = 1000;
-	const uint16_t blinkFast = 750;
+	const uint16_t blinkSlow = 500;
+	const uint16_t blinkFast = 125;
 	static uint16_t ms_cntr = 0;
+	static uint8_t debounceTimer = 50;
+	static bool debouncing = false;
+	static uint16_t ButtonSetPressedCounter = 0;
+	static uint16_t ButtonModePressedCounter = 0;
+	
 	ms_cntr = (ms_cntr + 1) % 1000;
 	
 	if(ms_cntr % blinkSlow == 0)
-		HAL_GPIO_TogglePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin);
-	
-	
+	{
+		switch(operationState)
+		{
+			case StateNormal:
+				HAL_GPIO_TogglePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin);
+				break;
+			case StateSetInputs:
+				HAL_GPIO_TogglePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin);
+				break;
+			case StateSetOutputs:
+				HAL_GPIO_TogglePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin);
+				break;
+		}
+	}
+		
 	if(ms_cntr % blinkFast == 0)
-		HAL_GPIO_TogglePin(IN4_LED_GPIO_Port, IN4_LED_Pin);
+	{
+		if(operationState == StateSetInputs)
+		{
+			HAL_GPIO_TogglePin(currentInput->ledPort, currentInput->ledPin);
+		}
+	}
+	
+	//Check Buttons
+	
+	if(HAL_GPIO_ReadPin(ButtonSet_GPIO_Port, ButtonSet_Pin) != ButtonSetFlag || HAL_GPIO_ReadPin(ButtonMode_GPIO_Port, ButtonMode_Pin) != ButtonModeFlag)
+			debouncing = true;
+	if(debouncing)
+		{
+			debounceTimer--;
+			if(debounceTimer == 0)
+			{
+				debounceTimer = 50;
+				debouncing = false;
+				if(HAL_GPIO_ReadPin(ButtonSet_GPIO_Port, ButtonSet_Pin) != ButtonSetFlag && ButtonSetFlag)
+					ButtonSetChanged = true;
+				if(HAL_GPIO_ReadPin(ButtonMode_GPIO_Port, ButtonMode_Pin) != ButtonModeFlag && ButtonModeFlag)
+					ButtonModeChanged = true;
+				
+				ButtonSetFlag = HAL_GPIO_ReadPin(ButtonSet_GPIO_Port, ButtonSet_Pin);
+				ButtonModeFlag = HAL_GPIO_ReadPin(ButtonMode_GPIO_Port, ButtonMode_Pin);
+			}
+		}
+		
+		if(ButtonSetFlag)
+		{
+			ButtonSetPressedCounter++;
+			if(ButtonSetPressedCounter >= BUTTON_PRESSED_LONG_DURATION)
+				ButtonSetPressedLong = true;
+		}
+		else
+			ButtonSetPressedCounter = 0;
+		
+		if(ButtonModeFlag)
+		{
+			ButtonModePressedCounter++;
+			if(ButtonModePressedCounter >= BUTTON_PRESSED_LONG_DURATION)
+				ButtonModePressedLong = true;
+		}
+		else
+			ButtonModePressedCounter = 0;
+
 		
 //	HAL_GPIO_TogglePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin);
 //	HAL_GPIO_TogglePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin);

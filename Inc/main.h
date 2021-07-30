@@ -65,10 +65,10 @@ void Error_Handler(void);
 #define UserLED_RD_GPIO_Port GPIOC
 #define UserLED_GN_Pin GPIO_PIN_15
 #define UserLED_GN_GPIO_Port GPIOC
-#define UserButton2_Pin GPIO_PIN_1
-#define UserButton2_GPIO_Port GPIOF
-#define UserButton1_Pin GPIO_PIN_1
-#define UserButton1_GPIO_Port GPIOA
+#define ButtonMode_Pin GPIO_PIN_1
+#define ButtonMode_GPIO_Port GPIOF
+#define ButtonSet_Pin GPIO_PIN_1
+#define ButtonSet_GPIO_Port GPIOA
 #define IN1_LED_Pin GPIO_PIN_12
 #define IN1_LED_GPIO_Port GPIOB
 #define IN2_LED_Pin GPIO_PIN_13

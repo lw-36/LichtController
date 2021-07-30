@@ -24,6 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "LichtController.h"
+#include "SetInputs.h"
 
 /* USER CODE END Includes */
 
@@ -54,9 +55,6 @@ TIM_HandleTypeDef htim6;
 TIM_HandleTypeDef htim15;
 
 /* USER CODE BEGIN PV */
-volatile uint16_t InputValue = 0;
-volatile uint16_t MinInputValue = 0-1;
-volatile uint16_t MaxInputValue = 0;
 
 
 /* USER CODE END PV */
@@ -89,8 +87,7 @@ static void MX_TIM6_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	ConfigInputs();
-	//ConfigOutputs();
+	
   /* USER CODE END 1 */
   
 
@@ -107,14 +104,16 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
+	ConfigInputs();
+	//ConfigOutputs();
 
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_ADC_Init();
-  MX_I2C1_Init();
-  MX_SPI1_Init();
+  //MX_ADC_Init();
+  //MX_I2C1_Init();
+  //MX_SPI1_Init();
   MX_TIM1_Init();
   MX_TIM3_Init();
   MX_TIM15_Init();
@@ -132,25 +131,55 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_2);
 
 	HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
-	
+	ButtonSetFlag = HAL_GPIO_ReadPin(ButtonSet_GPIO_Port, ButtonSet_Pin);
+	ButtonModeFlag = HAL_GPIO_ReadPin(ButtonMode_GPIO_Port, ButtonMode_Pin);
 	HAL_TIM_Base_Start_IT(&htim6);
 	
-	HAL_Delay(500);
-	if(HAL_GPIO_ReadPin(UserButton1_GPIO_Port, UserButton1_Pin) == GPIO_PIN_SET)
+	HAL_Delay(10);
+	if(HAL_GPIO_ReadPin(ButtonSet_GPIO_Port, ButtonSet_Pin) == GPIO_PIN_SET)
 	{
-		HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_RESET);
-		setInputRange(&Input1);
-		HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
+		operationState = StateSetInputs;
+		while(!ButtonSetChanged)
+			HAL_Delay(1);
+		ButtonSetChanged = false;
+		HAL_Delay(50);
   }
-		/* USER CODE END 2 */
+	else if(HAL_GPIO_ReadPin(ButtonMode_GPIO_Port, ButtonMode_Pin) == GPIO_PIN_SET)
+	{
+		operationState = StateSetOutputs;
+	}
+  /* USER CODE END 2 */
  
  
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	int32_t i=0;
   while (1)
   {
+		switch(operationState)
+		{
+			case StateNormal:
+				
+				break;
+			case StateSetInputs:
+				SetInputsFunc();
+				//setInputRange(&Input1);
+				if(ButtonSetPressedLong)
+				{
+					ButtonSetPressedLong = false;
+					HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_SET);
+					operationState = StateNormal;
+				}
+				break;
+			case StateSetOutputs:
+				HAL_Delay(1000);
+				operationState = StateNormal;
+				break;
+		}
+		/*HAL_Delay(250);
+		HAL_GPIO_TogglePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin);*/
+		
+		/*int32_t i=0;
 		HAL_Delay(1);
 		i = Input1.Value * OUTPUT_RANGE / (INPUT_SCALED_RANGE);
 		if(i < 0)
@@ -166,16 +195,16 @@ int main(void)
 		
 		//HAL_TIM_PWM_ConfigChannel(&htim3, &test, TIM_CHANNEL_1);
 		//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, i);
-		if(HAL_GPIO_ReadPin(UserButton1_GPIO_Port, UserButton1_Pin) == GPIO_PIN_SET)
+		if(HAL_GPIO_ReadPin(ButtonSet_GPIO_Port, ButtonSet_Pin) == GPIO_PIN_SET)
 			HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_RESET);
 		else
 			HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
 		
-		//if(HAL_GPIO_ReadPin(UserButton2_GPIO_Port, UserButton2_Pin) == GPIO_PIN_SET)
+		//if(HAL_GPIO_ReadPin(ButtonMode_GPIO_Port, ButtonMode_Pin) == GPIO_PIN_SET)
 		if(Input1.Value >= INPUT_SCALED_RANGE / 2)
 			HAL_GPIO_WritePin(IN1_LED_GPIO_Port, IN1_LED_Pin, GPIO_PIN_RESET);
 		else                                   
-			HAL_GPIO_WritePin(IN1_LED_GPIO_Port, IN1_LED_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(IN1_LED_GPIO_Port, IN1_LED_Pin, GPIO_PIN_SET);*/
 			
  		//HAL_Delay(250);
 		
@@ -655,17 +684,17 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : UserButton2_Pin */
-  GPIO_InitStruct.Pin = UserButton2_Pin;
+  /*Configure GPIO pin : ButtonMode_Pin */
+  GPIO_InitStruct.Pin = ButtonMode_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  HAL_GPIO_Init(UserButton2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(ButtonMode_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : UserButton1_Pin */
-  GPIO_InitStruct.Pin = UserButton1_Pin;
+  /*Configure GPIO pin : ButtonSet_Pin */
+  GPIO_InitStruct.Pin = ButtonSet_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  HAL_GPIO_Init(UserButton1_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(ButtonSet_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : IN1_LED_Pin IN2_LED_Pin */
   GPIO_InitStruct.Pin = IN1_LED_Pin|IN2_LED_Pin;

@@ -37,6 +37,8 @@ typedef struct
 	uint16_t switchingValue;
 	uint16_t minIntensity;
 	uint16_t maxIntensity;
+	TIM_HandleTypeDef* timer;
+	uint32_t channel;
 }Output_t;
 
 typedef struct
@@ -46,26 +48,44 @@ typedef struct
 	uint16_t maxValue;
 	uint16_t unscaledValue;
 	int16_t Value;
+	GPIO_TypeDef* ledPort;
+	uint16_t ledPin;
 	LowLevelInput_t LLInput;
 }Input_t;
 
 typedef enum
 {
-	Normal,
-	Setinputs,
-	SetOutputs
+	StateNormal,
+	StateSetInputs,
+	StateSetOutputs
 }OperationStates_t;
 
 #define INPUT_SCALED_RANGE	4095			//Max 32767
 #define INPUT_TOLERANCE			3
 #define OUTPUT_RANGE				65535			//Max 65535
 
-/***************Variables***************/
-extern Input_t Input1;
-extern Input_t Input2;
-extern Input_t Input3;
-extern Input_t Input4;
+#define BUTTON_PRESSED_LONG_DURATION 2000 //in ms
 
+/***************Variables***************/
+extern Input_t* Input1;
+extern Input_t* Input2;
+extern Input_t* Input3;
+extern Input_t* Input4;
+
+extern Input_t Inputs[4];
+
+extern OperationStates_t operationState;
+
+extern GPIO_PinState ButtonSetFlag; 
+extern GPIO_PinState ButtonModeFlag;
+
+extern bool ButtonSetChanged;
+extern bool ButtonModeChanged;
+
+extern bool ButtonSetPressedLong;
+extern bool ButtonModePressedLong;
+
+extern Input_t* currentInput;
 /**********Function Prototypes**********/
 void ConfigInputs(void);
 void ConfigOutputs(void);
