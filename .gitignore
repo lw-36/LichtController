@@ -7,6 +7,7 @@
 *.obj
 *.elf
 *.s
+*.crf
 
 # Linker output
 *.ilk
@@ -51,4 +52,4 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-/MDK_ARM/LichtControllerV1
+MDK_ARM/LichtControllerV1/
