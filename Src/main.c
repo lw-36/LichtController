@@ -131,20 +131,22 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_2);
 
 	HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
-	ButtonSetFlag = HAL_GPIO_ReadPin(ButtonSet_GPIO_Port, ButtonSet_Pin);
-	ButtonModeFlag = HAL_GPIO_ReadPin(ButtonMode_GPIO_Port, ButtonMode_Pin);
+	ButtonSet.ButtonFlag = HAL_GPIO_ReadPin(ButtonSet.ButtonPort, ButtonSet.ButtonPin);
+	ButtonMode.ButtonFlag = HAL_GPIO_ReadPin(ButtonMode.ButtonPort, ButtonMode.ButtonPin);
 	HAL_TIM_Base_Start_IT(&htim6);
 	
 	HAL_Delay(10);
-	if(HAL_GPIO_ReadPin(ButtonSet_GPIO_Port, ButtonSet_Pin) == GPIO_PIN_SET)
+	if(HAL_GPIO_ReadPin(ButtonSet.ButtonPort, ButtonSet.ButtonPin) == GPIO_PIN_SET)
 	{
+		InputToSet = &Inputs[0];
 		operationState = StateSetInputs;
-		while(!ButtonSetChanged)
+		HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
+		while(!ButtonSet.ButtonChanged)
 			HAL_Delay(1);
-		ButtonSetChanged = false;
+		ButtonSet.ButtonChanged = false;
 		HAL_Delay(50);
   }
-	else if(HAL_GPIO_ReadPin(ButtonMode_GPIO_Port, ButtonMode_Pin) == GPIO_PIN_SET)
+	else if(HAL_GPIO_ReadPin(ButtonMode.ButtonPort, ButtonMode.ButtonPin) == GPIO_PIN_SET)
 	{
 		operationState = StateSetOutputs;
 	}
@@ -163,11 +165,12 @@ int main(void)
 				break;
 			case StateSetInputs:
 				SetInputsFunc();
-				//setInputRange(&Input1);
-				if(ButtonSetPressedLong)
+			
+				if(ButtonSet.ButtonPressedLong)
 				{
-					ButtonSetPressedLong = false;
+					ButtonSet.ButtonPressedLong = false;
 					HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_SET);
+					HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
 					operationState = StateNormal;
 				}
 				break;

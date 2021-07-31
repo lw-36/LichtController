@@ -178,16 +178,15 @@ void TIM6_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM6_IRQn 0 */
 	const uint16_t blinkSlow = 500;
-	const uint16_t blinkFast = 125;
+	const uint16_t blinkMedium = 250;
+	const uint16_t blinkFast = 100;
 	static uint16_t ms_cntr = 0;
-	static uint8_t debounceTimer = 50;
-	static bool debouncing = false;
-	static uint16_t ButtonSetPressedCounter = 0;
-	static uint16_t ButtonModePressedCounter = 0;
+	//static uint16_t ButtonSetPressedCounter = 0;
+	//static uint16_t ButtonModePressedCounter = 0;
 	
 	ms_cntr = (ms_cntr + 1) % 1000;
 	
-	if(ms_cntr % blinkSlow == 0)
+	if(ms_cntr % blinkMedium == 0)
 	{
 		switch(operationState)
 		{
@@ -195,7 +194,36 @@ void TIM6_IRQHandler(void)
 				HAL_GPIO_TogglePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin);
 				break;
 			case StateSetInputs:
-				HAL_GPIO_TogglePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin);
+				switch(InputSetParam)
+				{
+					case InputSetNone:
+						break;
+					case InputSetMode:
+						if(ms_cntr < blinkMedium)
+						{
+							HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_RESET);
+							HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_SET);
+						}
+						else
+						{
+							HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_SET);
+							HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
+						}
+						break;
+					case InputSetRange:
+						HAL_GPIO_TogglePin(InputToSet->ledPort, InputToSet->ledPin);
+						if(ms_cntr < blinkMedium)
+						{
+							HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_RESET);
+							HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_SET);
+						}
+						else
+						{
+							HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
+							HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
+						}
+						break;
+				}
 				break;
 			case StateSetOutputs:
 				HAL_GPIO_TogglePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin);
@@ -206,60 +234,26 @@ void TIM6_IRQHandler(void)
 	if(ms_cntr % blinkFast == 0)
 	{
 		if(operationState == StateSetInputs)
-		{
-			HAL_GPIO_TogglePin(currentInput->ledPort, currentInput->ledPin);
+		{switch(InputSetParam)
+				{
+					case InputSetNone:
+						HAL_GPIO_TogglePin(InputToSet->ledPort, InputToSet->ledPin);
+						break;
+					case InputSetMode:
+						if(ms_cntr <= InputToSet->Mode * blinkFast * 2)
+							HAL_GPIO_TogglePin(InputToSet->ledPort, InputToSet->ledPin);
+						else
+							HAL_GPIO_WritePin(InputToSet->ledPort, InputToSet->ledPin, GPIO_PIN_RESET);
+						break;
+					case InputSetRange:
+						//HAL_GPIO_TogglePin(InputToSet->ledPort, InputToSet->ledPin);
+						break;
+				}
 		}
 	}
 	
 	//Check Buttons
-	
-	if(HAL_GPIO_ReadPin(ButtonSet_GPIO_Port, ButtonSet_Pin) != ButtonSetFlag || HAL_GPIO_ReadPin(ButtonMode_GPIO_Port, ButtonMode_Pin) != ButtonModeFlag)
-			debouncing = true;
-	if(debouncing)
-		{
-			debounceTimer--;
-			if(debounceTimer == 0)
-			{
-				debounceTimer = 50;
-				debouncing = false;
-				if(HAL_GPIO_ReadPin(ButtonSet_GPIO_Port, ButtonSet_Pin) != ButtonSetFlag && ButtonSetFlag)
-					ButtonSetChanged = true;
-				if(HAL_GPIO_ReadPin(ButtonMode_GPIO_Port, ButtonMode_Pin) != ButtonModeFlag && ButtonModeFlag)
-					ButtonModeChanged = true;
-				
-				ButtonSetFlag = HAL_GPIO_ReadPin(ButtonSet_GPIO_Port, ButtonSet_Pin);
-				ButtonModeFlag = HAL_GPIO_ReadPin(ButtonMode_GPIO_Port, ButtonMode_Pin);
-			}
-		}
-		
-		if(ButtonSetFlag)
-		{
-			ButtonSetPressedCounter++;
-			if(ButtonSetPressedCounter >= BUTTON_PRESSED_LONG_DURATION)
-				ButtonSetPressedLong = true;
-		}
-		else
-			ButtonSetPressedCounter = 0;
-		
-		if(ButtonModeFlag)
-		{
-			ButtonModePressedCounter++;
-			if(ButtonModePressedCounter >= BUTTON_PRESSED_LONG_DURATION)
-				ButtonModePressedLong = true;
-		}
-		else
-			ButtonModePressedCounter = 0;
-
-		
-//	HAL_GPIO_TogglePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin);
-//	HAL_GPIO_TogglePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin);
-//	HAL_GPIO_TogglePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin);
-//	
-//	HAL_GPIO_TogglePin(IN1_LED_GPIO_Port, IN1_LED_Pin);
-//	HAL_GPIO_TogglePin(IN2_LED_GPIO_Port, IN2_LED_Pin);
-//	HAL_GPIO_TogglePin(IN3_LED_GPIO_Port, IN3_LED_Pin);
-//	HAL_GPIO_TogglePin(IN4_LED_GPIO_Port, IN4_LED_Pin);
-	
+	ButtonHandler();	
   /* USER CODE END TIM6_IRQn 0 */
   HAL_TIM_IRQHandler(&htim6);
   /* USER CODE BEGIN TIM6_IRQn 1 */

@@ -1,64 +1,14 @@
+#ifndef __LICHTCONTROLLER_H
+	#define __LICHTCONTROLLER_H
 /****************Includes***************/
 #include <stdint.h>
 #include <stdbool.h>
 #include "main.h"
+#include "Types.h"
+#include "SetInputs.h"
 
 /****************Defines****************/
-typedef enum
-{
-	OnOff,
-	Dimm,
-	Blink,
-	Fix
-}OutputModes_t;	
 
-typedef enum
-{
-	None,
-	Standard,
-	Killswitch,
-	Modeswitch
-}InputModes_t;
-
-typedef struct
-{
-	uint32_t risingEdge;
-	uint32_t fallingEdge;
-	bool risingEdgeNext;
-	TIM_HandleTypeDef* timer;
-	uint32_t channel;
-}LowLevelInput_t;
-
-typedef struct
-{
-	OutputModes_t Mode;
-	uint8_t assignedInput;
-	bool Invert;
-	uint16_t switchingValue;
-	uint16_t minIntensity;
-	uint16_t maxIntensity;
-	TIM_HandleTypeDef* timer;
-	uint32_t channel;
-}Output_t;
-
-typedef struct
-{
-	InputModes_t Mode;
-	uint16_t minValue;
-	uint16_t maxValue;
-	uint16_t unscaledValue;
-	int16_t Value;
-	GPIO_TypeDef* ledPort;
-	uint16_t ledPin;
-	LowLevelInput_t LLInput;
-}Input_t;
-
-typedef enum
-{
-	StateNormal,
-	StateSetInputs,
-	StateSetOutputs
-}OperationStates_t;
 
 #define INPUT_SCALED_RANGE	4095			//Max 32767
 #define INPUT_TOLERANCE			3
@@ -76,18 +26,14 @@ extern Input_t Inputs[4];
 
 extern OperationStates_t operationState;
 
-extern GPIO_PinState ButtonSetFlag; 
-extern GPIO_PinState ButtonModeFlag;
-
-extern bool ButtonSetChanged;
-extern bool ButtonModeChanged;
-
-extern bool ButtonSetPressedLong;
-extern bool ButtonModePressedLong;
+extern Button_t ButtonSet;
+extern Button_t ButtonMode;
 
 extern Input_t* currentInput;
 /**********Function Prototypes**********/
 void ConfigInputs(void);
 void ConfigOutputs(void);
 
-void setInputRange(Input_t* Input);
+void ButtonHandler(void);
+
+#endif
