@@ -125,7 +125,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGTARM</Key>
-          <Name>(1010=-1,-1,-1,-1,0)(1007=-1,-1,-1,-1,0)(1008=-1,-1,-1,-1,0)</Name>
+          <Name>(1010=75,104,486,533,0)(1007=238,189,445,410,0)(1008=-1,-1,-1,-1,0)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -145,16 +145,16 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>ST-LINKIII-KEIL_SWO</Key>
-          <Name>-U0671FF515754888367194340 -O2254 -SF5000 -C0 -A0 -I0 -HNlocalhost -HP7184 -P1 -N00("ARM CoreSight SW-DP (ARM Core") -D00(0BB11477) -L00(0) -TO131090 -TC10000000 -TT10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC800 -FN1 -FF0STM32F0xx_64.FLM -FS08000000 -FL010000 -FP0($$Device:STM32F030C8Tx$CMSIS\Flash\STM32F0xx_64.FLM)</Name>
+          <Name>-U0671FF515754888367194340 -O2254 -SF5000 -C0 -A0 -I0 -HNlocalhost -HP7184 -P1 -N00("ARM CoreSight SW-DP (ARM Core") -D00(0BB11477) -L00(0) -TO131090 -TC10000000 -TT10000000 -TP21 -TDS8000 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC800 -FN1 -FF0STM32F0xx_64.FLM -FS08000000 -FL010000 -FP0($$Device:STM32F030C8Tx$CMSIS\Flash\STM32F0xx_64.FLM)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint>
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>238</LineNumber>
+          <LineNumber>154</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134225210</Address>
+          <Address>134225656</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -163,14 +163,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>../Src/stm32f0xx_it.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\LichtController\../Src/stm32f0xx_it.c\238</Expression>
+          <Expression>\\LichtController\../Src/stm32f0xx_it.c\154</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>240</LineNumber>
+          <LineNumber>160</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134225216</Address>
+          <Address>134225772</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -179,7 +179,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>../Src/stm32f0xx_it.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\LichtController\../Src/stm32f0xx_it.c\240</Expression>
+          <Expression>\\LichtController\../Src/stm32f0xx_it.c\160</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -211,14 +211,35 @@
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>ButtonSetPressedLong</ItemText>
+          <ItemText>Inputs</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>ButtonSetPressedCounter</ItemText>
+          <ItemText>ButtonSet</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>tmp</ItemText>
         </Ww>
       </WatchWindow1>
+      <MemoryWindow1>
+        <Mm>
+          <WinNumber>1</WinNumber>
+          <SubType>0</SubType>
+          <ItemText>0x20000034</ItemText>
+          <AccSizeX>0</AccSizeX>
+        </Mm>
+      </MemoryWindow1>
+      <MemoryWindow2>
+        <Mm>
+          <WinNumber>2</WinNumber>
+          <SubType>0</SubType>
+          <ItemText>0x0800F000</ItemText>
+          <AccSizeX>0</AccSizeX>
+        </Mm>
+      </MemoryWindow2>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>

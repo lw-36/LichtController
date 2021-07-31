@@ -138,9 +138,15 @@ void TIM1_CC_IRQHandler(void)
   /* USER CODE BEGIN TIM1_CC_IRQn 0 */
 	Input_t* CurrentInput;
 	if(TIM_FLAG_CC1)
-	{
 		CurrentInput = Input1;
-	}
+	else if(TIM_FLAG_CC2)
+		CurrentInput = Input2;
+	else if(TIM_FLAG_CC3)
+		CurrentInput = Input3;
+	else if(TIM_FLAG_CC4)
+		CurrentInput = Input4;
+	else return;
+	
 	
 	if(CurrentInput->LLInput.risingEdgeNext)
 	{

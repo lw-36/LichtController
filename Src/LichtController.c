@@ -9,6 +9,7 @@
 
 /**********Function Prototypes**********/
 void ButtonPressedLongHandler(Button_t* Button);
+void LoadInputConfig(void);
 
 /***************Variables***************/
 Input_t Inputs[4];
@@ -38,6 +39,7 @@ void ConfigInputs(void)
 {
 	//Config Inputs
 	{
+		/*
 		//Config Input1
 		extern TIM_HandleTypeDef htim1;
 		Input1->Mode = InputNone;
@@ -85,8 +87,28 @@ void ConfigInputs(void)
 		Input4->LLInput.risingEdgeNext = false;
 		Input4->ledPort = IN4_LED_GPIO_Port;
 		Input4->ledPin = IN4_LED_Pin;
+		*/
+		//Test
 		
-		currentInput = Input1;
+	LoadInputConfig();
+	extern TIM_HandleTypeDef htim1;
+	
+	for(uint8_t i = 0; i < 4; i++)
+	{
+		if(Inputs[i].Mode == InputNone)
+		{
+			Inputs[i].minValue = 65535;
+			Inputs[i].maxValue = 0;
+		}
+		else
+			HAL_GPIO_WritePin(Inputs[i].ledPort, Inputs[i].ledPin, GPIO_PIN_SET);
+		Inputs[i].Value = 0;
+		Inputs[i].LLInput.risingEdgeNext = true;
+		Inputs[i].LLInput.timer = &htim1;
+		Inputs[i].LLInput.channel = i*4;
+	}
+	
+		
 	}
 	//Config Buttons
 	{
@@ -144,5 +166,19 @@ void ButtonPressedLongHandler(Button_t* Button)
 	}
 	else
 		Button->ButtonPressedCounter = 0;
+}
+
+void LoadInputConfig(void)
+{
+	 volatile uint16_t size = sizeof(Inputs)/4;
+	 uint32_t* wrAddress = (uint32_t*)Inputs;
+	 volatile uint32_t* rdAddress = (uint32_t*)0x0800F000;
+	
+	uint16_t i = 0;
+	while(i<size)
+	{
+		memcpy(wrAddress + i, (uint32_t*)(0x0800F000 + i*4), 4);
+		i++;
+	}
 }
 

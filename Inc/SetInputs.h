@@ -16,6 +16,6 @@ extern Input_t* InputToSet;
 
 /**********Function Prototypes**********/
 void SetInputsFunc(void);
-void setInputRange(Input_t* Input);
+void SaveInputConfig(void);
 
 #endif

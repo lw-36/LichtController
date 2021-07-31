@@ -6,6 +6,10 @@
 
 /****************Defines****************/
 
+
+/**********Function Prototypes**********/
+void setInputRange(Input_t* Input);
+
 /***************Variables***************/
 uint8_t InputToSetNumber = 0;
 Input_t* InputToSet;
@@ -71,4 +75,29 @@ void setInputRange(Input_t* Input)
 	if(Input->unscaledValue > Input->maxValue - INPUT_TOLERANCE)
 		Input->maxValue = Input->unscaledValue - INPUT_TOLERANCE;
 	return;
+}
+
+void SaveInputConfig(void)
+{
+	volatile uint16_t size = sizeof(Inputs);
+	volatile uint32_t* rdAddress = (uint32_t*)Inputs;
+	volatile uint32_t wrAddress = 0x0800F000;
+	HAL_FLASH_Unlock();
+	FLASH_EraseInitTypeDef test;
+	test.TypeErase = FLASH_TYPEERASE_PAGES;
+	test.PageAddress = 0x0800F000;
+	test.NbPages = 1;
+	uint32_t out;
+	HAL_FLASHEx_Erase(&test, &out);
+	
+	uint16_t i = 0;
+	while(i < size)
+	{
+		HAL_StatusTypeDef retVal = HAL_FLASH_Program(TYPEPROGRAM_WORD, wrAddress, *rdAddress);
+		wrAddress += 4;
+		rdAddress += 1;
+		i += 4;
+	}
+	
+	HAL_FLASH_Lock();
 }

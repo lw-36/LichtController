@@ -104,7 +104,6 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-	ConfigInputs();
 	//ConfigOutputs();
 
   /* USER CODE END SysInit */
@@ -119,6 +118,7 @@ int main(void)
   MX_TIM15_Init();
   MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
+	ConfigInputs();
 	
 	HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
@@ -169,6 +169,7 @@ int main(void)
 				if(ButtonSet.ButtonPressedLong)
 				{
 					ButtonSet.ButtonPressedLong = false;
+					SaveInputConfig();
 					HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_SET);
 					HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
 					operationState = StateNormal;
