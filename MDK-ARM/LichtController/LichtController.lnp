@@ -6,6 +6,7 @@
 "lichtcontroller\main.o"
 "lichtcontroller\stm32f0xx_it.o"
 "lichtcontroller\stm32f0xx_hal_msp.o"
+"lichtcontroller\setoutputs.o"
 "lichtcontroller\stm32f0xx_hal_adc.o"
 "lichtcontroller\stm32f0xx_hal_adc_ex.o"
 "lichtcontroller\stm32f0xx_hal_rcc.o"

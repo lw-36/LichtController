@@ -6,6 +6,7 @@
 #include "main.h"
 #include "Types.h"
 #include "SetInputs.h"
+#include "SetOutputs.h"
 
 /****************Defines****************/
 
@@ -17,19 +18,27 @@
 #define BUTTON_PRESSED_LONG_DURATION 2000 //in ms
 
 /***************Variables***************/
+extern Input_t Inputs[4];
 extern Input_t* Input1;
 extern Input_t* Input2;
 extern Input_t* Input3;
 extern Input_t* Input4;
 
-extern Input_t Inputs[4];
-
-extern OperationStates_t operationState;
-
+extern Output_t Outputs[6];
+extern Output_t* Output1;
+extern Output_t* Output2;
+extern Output_t* Output3;
+extern Output_t* Output4;
+extern Output_t* Output5;
+extern Output_t* Output6;
+	
 extern Button_t ButtonSet;
 extern Button_t ButtonMode;
+extern OperationStates_t operationState;
 
 extern Input_t* currentInput;
+extern uint16_t ms_cntr;
+extern uint16_t cntr_10ms;
 /**********Function Prototypes**********/
 void ConfigInputs(void);
 void ConfigOutputs(void);

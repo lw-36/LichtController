@@ -15,7 +15,14 @@ typedef enum
 	OutputDimm,
 	OutputBlink,
 	OutputFix
-}OutputModes_t;	
+}OutputModes_t;
+
+typedef enum
+{
+	Standard,
+	NavLights,
+	Beacon
+}BlinkPattern_t;
 
 typedef enum
 {
@@ -38,6 +45,7 @@ typedef struct
 typedef struct
 {
 	OutputModes_t Mode;
+	BlinkPattern_t SubMode;
 	uint8_t assignedInput;
 	bool Invert;
 	uint16_t switchingValue;
@@ -83,5 +91,16 @@ typedef enum
 	InputSetMode,
 	InputSetRange
 }InputSet_t;
+
+typedef enum
+{
+	OutputSetNone,
+	OutputSetMode,
+	OutputSetSubMode,
+	OutputSetTransition,
+	OutputSetIntensity,
+	OutputSetInput,
+	OutputSetInputRange
+}OutputSet_t;
 
 #endif

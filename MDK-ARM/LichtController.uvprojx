@@ -442,6 +442,16 @@
               <FileType>5</FileType>
               <FilePath>..\Inc\Types.h</FilePath>
             </File>
+            <File>
+              <FileName>SetOutputs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\SetOutputs.c</FilePath>
+            </File>
+            <File>
+              <FileName>SetOutputs.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Inc\SetOutputs.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

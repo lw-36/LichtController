@@ -30,7 +30,7 @@ void SetInputsFunc(void)
 				else
 					HAL_GPIO_WritePin(InputToSet->ledPort, InputToSet->ledPin, GPIO_PIN_SET);
 				
-				InputToSet =  &Inputs[InputToSetNumber];
+				InputToSet = &Inputs[InputToSetNumber];
 			}
 			else if(ButtonSet.ButtonChanged)
 			{

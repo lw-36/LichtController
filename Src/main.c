@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include "LichtController.h"
 #include "SetInputs.h"
+#include "SetOutputs.h"
 
 /* USER CODE END Includes */
 
@@ -140,7 +141,7 @@ int main(void)
 	{
 		InputToSet = &Inputs[0];
 		operationState = StateSetInputs;
-		HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_RESET);
 		while(!ButtonSet.ButtonChanged)
 			HAL_Delay(1);
 		ButtonSet.ButtonChanged = false;
@@ -149,6 +150,15 @@ int main(void)
 	else if(HAL_GPIO_ReadPin(ButtonMode.ButtonPort, ButtonMode.ButtonPin) == GPIO_PIN_SET)
 	{
 		operationState = StateSetOutputs;
+		HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_RESET);
+		while(!ButtonMode.ButtonChanged)
+			HAL_Delay(1);
+		ButtonMode.ButtonChanged = false;
+		HAL_Delay(50);
+	}
+	else
+	{
+		HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
 	}
   /* USER CODE END 2 */
  
@@ -158,6 +168,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+		while(cntr_10ms != 0)
+			;
+		
+		cntr_10ms = 10;
 		switch(operationState)
 		{
 			case StateNormal:
@@ -170,14 +184,20 @@ int main(void)
 				{
 					ButtonSet.ButtonPressedLong = false;
 					SaveInputConfig();
-					HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_SET);
+					HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
 					HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
 					operationState = StateNormal;
 				}
 				break;
 			case StateSetOutputs:
-				HAL_Delay(1000);
-				operationState = StateNormal;
+				SetOutputsFunc();
+				if(ButtonSet.ButtonPressedLong)
+					{
+						ButtonSet.ButtonPressedLong = false;
+						HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
+						HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_SET);
+						operationState = StateNormal;
+					}
 				break;
 		}
 		/*HAL_Delay(250);

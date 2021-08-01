@@ -11,5 +11,12 @@
 /***************Functions***************/
 void NormalOperation(void)
 {
-	
+	if(StateNormal)
+	{
+		
+	}
+	else if(StateSetOutputs)
+	{
+		
+	}
 }
