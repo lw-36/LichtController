@@ -35,13 +35,15 @@ Input_t* currentInput;
 Output_t* currentOutput;
 
 uint16_t ms_cntr = 0;
+uint16_t ms_cntr_old = 0;
 uint16_t cntr_10ms = 10;
+uint16_t s_cntr = 0;
 
 /***************Functions***************/
 void ConfigInputs(void)
 {
 	//Config PWM-Inputs
-	{		
+	{
 	LoadInputConfig();
 	extern TIM_HandleTypeDef htim1;
 	
@@ -77,7 +79,21 @@ void ConfigInputs(void)
 
 void ConfigOutputs(void)
 {
+	extern TIM_HandleTypeDef htim3;
+	extern TIM_HandleTypeDef htim15;
+	Output1->timer = &htim3;
+	Output2->timer = &htim3;
+	Output3->timer = &htim3;
+	Output4->timer = &htim3;
+	Output5->timer = &htim15;
+	Output6->timer = &htim15;
 	
+	Output1->channel = TIM_CHANNEL_1;
+	Output2->channel = TIM_CHANNEL_2;
+	Output3->channel = TIM_CHANNEL_3;
+	Output4->channel = TIM_CHANNEL_4;
+	Output5->channel = TIM_CHANNEL_1;
+	Output6->channel = TIM_CHANNEL_2;
 }
 
 void ButtonHandler(void)
@@ -93,6 +109,7 @@ void ButtonHandler(void)
 		{
 			debounceTimer = 50;
 			debouncing = false;
+			
 			if(HAL_GPIO_ReadPin(ButtonSet.ButtonPort, ButtonSet.ButtonPin) != ButtonSet.ButtonFlag && ButtonSet.ButtonFlag)
 				ButtonSet.ButtonChanged = true;
 			if(HAL_GPIO_ReadPin(ButtonMode.ButtonPort, ButtonMode.ButtonPin) != ButtonMode.ButtonFlag && ButtonMode.ButtonFlag)
@@ -100,6 +117,9 @@ void ButtonHandler(void)
 			
 			ButtonSet.ButtonFlag = HAL_GPIO_ReadPin(ButtonSet.ButtonPort, ButtonSet.ButtonPin);
 			ButtonMode.ButtonFlag = HAL_GPIO_ReadPin(ButtonMode.ButtonPort, ButtonMode.ButtonPin);
+			
+			ButtonSet.ButtonPressed = ButtonSet.ButtonFlag;
+			ButtonMode.ButtonPressed = ButtonMode.ButtonFlag;
 		}
 	}
 		
@@ -114,7 +134,10 @@ void ButtonPressedLongHandler(Button_t* Button)
 	{
 		Button->ButtonPressedCounter++;
 		if(Button->ButtonPressedCounter >= BUTTON_PRESSED_LONG_DURATION)
+		{
 			Button->ButtonPressedLong = true;
+			Button->ButtonPressedCounter = 0;
+		}
 	}
 	else
 		Button->ButtonPressedCounter = 0;
@@ -122,14 +145,14 @@ void ButtonPressedLongHandler(Button_t* Button)
 
 void LoadInputConfig(void)
 {
-	 volatile uint16_t size = sizeof(Inputs)/4;
+	 uint16_t size = sizeof(Inputs)/4;
 	 uint32_t* wrAddress = (uint32_t*)Inputs;
-	 volatile uint32_t* rdAddress = (uint32_t*)0x0800F000;
+	 uint32_t rdAddress = 0x0800F000;
 	
 	uint16_t i = 0;
 	while(i<size)
 	{
-		memcpy(wrAddress + i, (uint32_t*)(0x0800F000 + i*4), 4);
+		memcpy(wrAddress + i, (uint32_t*)(rdAddress + i*4), 4);
 		i++;
 	}
 }

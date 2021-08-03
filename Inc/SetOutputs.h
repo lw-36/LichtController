@@ -17,5 +17,7 @@ extern Output_t* OutputToSet;
 /**********Function Prototypes**********/
 void SetOutputsFunc(void);
 void SaveOutputConfig(void);
+void SetOutputIntensityRange(Output_t* Output, Input_t* Input);
+void SetOutputInputRange(Output_t* Output, Input_t* Input);
 
 #endif

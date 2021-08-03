@@ -26,6 +26,7 @@
 #include "LichtController.h"
 #include "SetInputs.h"
 #include "SetOutputs.h"
+#include "NormalOperation.h"
 
 /* USER CODE END Includes */
 
@@ -120,6 +121,7 @@ int main(void)
   MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
 	ConfigInputs();
+	ConfigOutputs();
 	
 	HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
@@ -149,6 +151,8 @@ int main(void)
   }
 	else if(HAL_GPIO_ReadPin(ButtonMode.ButtonPort, ButtonMode.ButtonPin) == GPIO_PIN_SET)
 	{
+		OutputToSet = &Outputs[0];
+		OutputToSet->Override = OutputORBlinkFast;
 		operationState = StateSetOutputs;
 		HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_RESET);
 		while(!ButtonMode.ButtonChanged)
@@ -168,10 +172,14 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		while(cntr_10ms != 0)
-			;
+//		while(cntr_10ms != 0)
+//			;
+//		
+//		cntr_10ms = 10;
 		
-		cntr_10ms = 10;
+		while(ms_cntr == ms_cntr_old)
+			;
+		ms_cntr_old = ms_cntr;
 		switch(operationState)
 		{
 			case StateNormal:
@@ -191,6 +199,7 @@ int main(void)
 				break;
 			case StateSetOutputs:
 				SetOutputsFunc();
+				NormalOperation();
 				if(ButtonSet.ButtonPressedLong)
 					{
 						ButtonSet.ButtonPressedLong = false;

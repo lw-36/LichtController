@@ -11,21 +11,6 @@
 
 typedef enum
 {
-	OutputOnOff,
-	OutputDimm,
-	OutputBlink,
-	OutputFix
-}OutputModes_t;
-
-typedef enum
-{
-	Standard,
-	NavLights,
-	Beacon
-}BlinkPattern_t;
-
-typedef enum
-{
 	InputNone,
 	InputStandard,
 	InputKillswitch,
@@ -44,19 +29,6 @@ typedef struct
 
 typedef struct
 {
-	OutputModes_t Mode;
-	BlinkPattern_t SubMode;
-	uint8_t assignedInput;
-	bool Invert;
-	uint16_t switchingValue;
-	uint16_t minIntensity;
-	uint16_t maxIntensity;
-	TIM_HandleTypeDef* timer;
-	uint32_t channel;
-}Output_t;
-
-typedef struct
-{
 	InputModes_t Mode;
 	uint16_t minValue;
 	uint16_t maxValue;
@@ -67,10 +39,54 @@ typedef struct
 	LowLevelInput_t LLInput;
 }Input_t;
 
+typedef enum
+{
+	OutputOnOff,
+	OutputDimm,
+	OutputBlink,
+	OutputFix
+}OutputModes_t;
+
+typedef enum
+{
+	BlinkStandard,
+	BlinkOnce,
+	BlinkAntiColl,
+	BlinkBeacon
+}BlinkPattern_t;
+
+typedef enum
+{
+	OutputORNone,
+	OutputOROn,
+	OutputOROff,
+	OutputORBlinkFast,
+	OutputORBlinkMedium,
+	OutputORBlinkSlow
+}OutputOverride_t;
+
+typedef struct
+{
+	OutputModes_t Mode;
+	BlinkPattern_t SubMode;
+	bool Fade;
+	uint8_t assignedInput;
+	bool Invert;
+	int16_t lowSwitchingValue;
+	int16_t highSwitchingValue;
+	uint16_t minIntensity;
+	uint16_t maxIntensity;
+	TIM_HandleTypeDef* timer;
+	uint32_t channel;
+	OutputOverride_t Override;
+	uint32_t time;
+}Output_t;
+
 typedef struct
 {
 	GPIO_PinState ButtonFlag;
 	bool ButtonChanged;
+	bool ButtonPressed;
 	bool ButtonPressedLong;
 	uint16_t ButtonPressedCounter;
 	GPIO_TypeDef* ButtonPort;
@@ -94,13 +110,15 @@ typedef enum
 
 typedef enum
 {
-	OutputSetNone,
-	OutputSetMode,
-	OutputSetSubMode,
-	OutputSetTransition,
-	OutputSetIntensity,
-	OutputSetInput,
-	OutputSetInputRange
+	OutputSetBasicNone,				// 0
+	OutputSetBasicMode,
+	OutputSetBasicSubMode,
+	OutputSetBasicInput,
+	OutputSetAdvIntensity,		// 4
+	OutputSetAdvTransition,
+	OutputSetAdvInputRange,
+	OutputSetAdvPolarity
 }OutputSet_t;
+
 
 #endif
