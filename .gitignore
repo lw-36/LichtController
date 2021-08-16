@@ -7,6 +7,7 @@
 *.obj
 *.elf
 *.s
+!MDK-ARM/startup_stm32f030x8.s
 *.crf
 
 # Linker output
