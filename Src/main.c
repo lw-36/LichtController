@@ -123,6 +123,9 @@ int main(void)
 	ConfigInputs();
 	ConfigOutputs();
 	
+	currentInput = Input1;
+	currentOutput = Output1;
+	
 	HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_SET);
@@ -134,6 +137,9 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_2);
 
 	HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
+	HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_2);
+	HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_3);
+	HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_4);
 	ButtonSet.ButtonFlag = HAL_GPIO_ReadPin(ButtonSet.ButtonPort, ButtonSet.ButtonPin);
 	ButtonMode.ButtonFlag = HAL_GPIO_ReadPin(ButtonMode.ButtonPort, ButtonMode.ButtonPin);
 	HAL_TIM_Base_Start_IT(&htim6);
@@ -183,10 +189,11 @@ int main(void)
 		switch(operationState)
 		{
 			case StateNormal:
-				
+				NormalOperation();
 				break;
 			case StateSetInputs:
 				SetInputsFunc();
+				NormalOperation();
 			
 				if(ButtonSet.ButtonPressedLong)
 				{
@@ -203,6 +210,7 @@ int main(void)
 				if(ButtonSet.ButtonPressedLong)
 					{
 						ButtonSet.ButtonPressedLong = false;
+						OutputToSet->Override = OutputOROff;
 						HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
 						HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_SET);
 						operationState = StateNormal;

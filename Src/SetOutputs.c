@@ -24,7 +24,7 @@ void SetOutputsFunc(void)
 			if(ButtonMode.ButtonChanged)
 			{
 				ButtonMode.ButtonChanged = false;
-				OutputToSet->Override = OutputOROff;
+				OutputToSet->Override = OutputORNone;
 				OutputToSetNumber = (OutputToSetNumber + 1) % 6;
 				OutputToSet = &Outputs[OutputToSetNumber];
 				OutputToSet->Override = OutputORBlinkFast;
@@ -32,11 +32,13 @@ void SetOutputsFunc(void)
 			else if(ButtonMode.ButtonPressedLong)
 			{
 				ButtonMode.ButtonPressedLong = false;
+				OutputToSet->Override = OutputORNone;
 				OutputSetParam = OutputSetAdvIntensity;
 			}
 			else if(ButtonSet.ButtonChanged)
 			{
 				ButtonSet.ButtonChanged = false;
+				OutputToSet->Override = OutputORNone;
 				OutputSetParam = OutputSetBasicMode;
 			}
 			break;
@@ -44,7 +46,7 @@ void SetOutputsFunc(void)
 			if(ButtonMode.ButtonChanged)
 			{
 				ButtonMode.ButtonChanged = false;
-				OutputToSet->Mode = (OutputToSet->Mode + 1) % 7;
+				OutputToSet->Mode = (OutputToSet->Mode + 1) % 4;
 			}
 			else if(ButtonSet.ButtonChanged)
 			{

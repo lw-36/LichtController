@@ -17,20 +17,21 @@ void OnOffHandler(Output_t* Output);
 void DimmHandler(Output_t* Output);
 void BlinkHandler(Output_t* Output);
 void FixHandler(Output_t* Output);
+void OverrideHandler(Output_t* Output);
 
 /***************Functions***************/
 void NormalOperation(void)
 {
 	if(StateSetOutputs)
 	{
-		for(uint8_t currentOutputNumber = 0; currentOutputNumber < 6; currentOutputNumber++)
-		{
-			currentOutput = &Outputs[currentOutputNumber];
-			if(currentOutput->Override == OutputOROff)
-				__HAL_TIM_SetCompare(currentOutput->timer, currentOutput->channel, 0);
-			else if(currentOutput->Override == OutputOROn)
-				__HAL_TIM_SetCompare(currentOutput->timer, currentOutput->channel, OUTPUT_RANGE);
-		}
+//		for(uint8_t currentOutputNumber = 0; currentOutputNumber < 6; currentOutputNumber++)
+//		{
+//			currentOutput = &Outputs[currentOutputNumber];
+//			if(currentOutput->Override == OutputOROff)
+//				__HAL_TIM_SetCompare(currentOutput->timer, currentOutput->channel, 0);
+//			else if(currentOutput->Override == OutputOROn)
+//				__HAL_TIM_SetCompare(currentOutput->timer, currentOutput->channel, OUTPUT_RANGE);
+//		}
 	}
 	//StateNormal
 	{
@@ -149,27 +150,39 @@ void NormalOperation(void)
 	
 	for(uint8_t currentOutputNumber = 0; currentOutputNumber < 6; currentOutputNumber++)
 	{
-		switch(currentOutput->Mode)
+		currentOutput = &Outputs[currentOutputNumber];
+		currentOutput->cntr = (currentOutput->cntr + 1) % currentOutput->time;
+		if(currentOutput->Override == OutputORNone)
 		{
-			case OutputOnOff:
-				OnOffHandler(currentOutput);
-				break;
-			case OutputDimm:
-				DimmHandler(currentOutput);
-				break;
-			case OutputBlink:
-				BlinkHandler(currentOutput);
-				break;
-			case OutputFix:
-				FixHandler(currentOutput);
-				break;
+			switch(currentOutput->Mode)
+			{
+				case OutputOnOff:
+					OnOffHandler(currentOutput);
+					break;
+				case OutputDimm:
+					DimmHandler(currentOutput);
+					break;
+				case OutputBlink:
+					BlinkHandler(currentOutput);
+					break;
+				case OutputFix:
+					FixHandler(currentOutput);
+					break;
+			}
+		}
+		else
+		{
+			OverrideHandler(currentOutput);
 		}
 	}
 }
 
 void OnOffHandler(Output_t* Output)
 {
-	
+	if(Inputs[Output->assignedInput].Value > Output->lowSwitchingValue - INPUT_TOLERANCE && !Output->Invert)
+		__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, Output->minIntensity);
+	else
+		__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, Output->maxIntensity);
 }
 
 void DimmHandler(Output_t* Output)
@@ -186,6 +199,10 @@ void BlinkHandler(Output_t* Output)
 	switch(Output->SubMode)
 	{
 		case BlinkStandard:
+			if(Output->cntr >= Output->time / 2)
+				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->maxIntensity);
+			else
+				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->minIntensity);
 			break;
 		case BlinkOnce:
 			break;
@@ -198,5 +215,13 @@ void BlinkHandler(Output_t* Output)
 
 void FixHandler(Output_t* Output)
 {
-	
+	__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, Output->maxIntensity);
+}
+
+void OverrideHandler(Output_t* Output)
+{
+	if(Output->Override == OutputOROff)
+		__HAL_TIM_SetCompare(Output->timer, Output->channel, 0);
+	else if(Output->Override == OutputOROn)
+		__HAL_TIM_SetCompare(Output->timer, Output->channel, OUTPUT_RANGE);
 }

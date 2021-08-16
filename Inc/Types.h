@@ -80,6 +80,7 @@ typedef struct
 	uint32_t channel;
 	OutputOverride_t Override;
 	uint32_t time;
+	uint32_t cntr;
 }Output_t;
 
 typedef struct

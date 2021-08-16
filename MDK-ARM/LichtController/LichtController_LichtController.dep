@@ -1,7 +1,7 @@
 Dependencies for Project 'LichtController', Target 'LichtController': (DO NOT MODIFY !)
 CompilerVersion: 5060750::V5.06 update 6 (build 750)::ARMCC
 F (startup_stm32f030x8.s)(0x61045A88)(--cpu Cortex-M0 --pd "__EVAL SETA 1" -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\_LichtController-IL:\Keil\Pack\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IL:\Keil\Pack\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include--pd "__UVISION_VERSION SETA 529" --pd "_RTE_ SETA 1" --pd "STM32F030x8 SETA 1"--list startup_stm32f030x8.lst --xref -o lichtcontroller\startup_stm32f030x8.o --depend lichtcontroller\startup_stm32f030x8.d)
-F (..\Src\LichtController.c)(0x6109C2A5)(--c99 -c --cpu Cortex-M0 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_LichtController-IL:\Keil\Pack\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IL:\Keil\Pack\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include-D__UVISION_VERSION="529" -D_RTE_ -DSTM32F030x8 -DUSE_HAL_DRIVER -DSTM32F030x8-o lichtcontroller\lichtcontroller.o --omf_browse lichtcontroller\lichtcontroller.crf --depend lichtcontroller\lichtcontroller.d)
+F (..\Src\LichtController.c)(0x610E6834)(--c99 -c --cpu Cortex-M0 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_LichtController-IL:\Keil\Pack\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IL:\Keil\Pack\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include-D__UVISION_VERSION="529" -D_RTE_ -DSTM32F030x8 -DUSE_HAL_DRIVER -DSTM32F030x8-o lichtcontroller\lichtcontroller.o --omf_browse lichtcontroller\lichtcontroller.crf --depend lichtcontroller\lichtcontroller.d)
 I (../Inc/main.h)(0x6104A981)
 I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h)(0x60E0AA39)
 I (../Inc/stm32f0xx_hal_conf.h)(0x61045A85)
@@ -38,7 +38,7 @@ I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim.h)(0x60E0AA39)
 I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim_ex.h)(0x60E0AA39)
 I (../Inc/LichtController.h)(0x6109ADC4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5D9B3488)
-I (../Inc/Types.h)(0x6109AB16)
+I (../Inc/Types.h)(0x610D64C2)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5D9B3488)
 I (../Inc/SetInputs.h)(0x61049AF6)
 I (../Inc/SetOutputs.h)(0x6109BD84)
@@ -80,12 +80,12 @@ I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim.h)(0x60E0AA39)
 I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim_ex.h)(0x60E0AA39)
 I (../Inc/LichtController.h)(0x6109ADC4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5D9B3488)
-I (../Inc/Types.h)(0x6109AB16)
+I (../Inc/Types.h)(0x610D64C2)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5D9B3488)
 I (../Inc/SetInputs.h)(0x61049AF6)
 I (../Inc/SetOutputs.h)(0x6109BD84)
 F (..\Inc\SetInputs.h)(0x61049AF6)()
-F (..\Src\NormalOperation.c)(0x6109C0FE)(--c99 -c --cpu Cortex-M0 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_LichtController-IL:\Keil\Pack\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IL:\Keil\Pack\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include-D__UVISION_VERSION="529" -D_RTE_ -DSTM32F030x8 -DUSE_HAL_DRIVER -DSTM32F030x8-o lichtcontroller\normaloperation.o --omf_browse lichtcontroller\normaloperation.crf --depend lichtcontroller\normaloperation.d)
+F (..\Src\NormalOperation.c)(0x610D6695)(--c99 -c --cpu Cortex-M0 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_LichtController-IL:\Keil\Pack\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IL:\Keil\Pack\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include-D__UVISION_VERSION="529" -D_RTE_ -DSTM32F030x8 -DUSE_HAL_DRIVER -DSTM32F030x8-o lichtcontroller\normaloperation.o --omf_browse lichtcontroller\normaloperation.crf --depend lichtcontroller\normaloperation.d)
 I (../Inc/main.h)(0x6104A981)
 I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h)(0x60E0AA39)
 I (../Inc/stm32f0xx_hal_conf.h)(0x61045A85)
@@ -122,12 +122,12 @@ I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim.h)(0x60E0AA39)
 I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim_ex.h)(0x60E0AA39)
 I (../Inc/LichtController.h)(0x6109ADC4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5D9B3488)
-I (../Inc/Types.h)(0x6109AB16)
+I (../Inc/Types.h)(0x610D64C2)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5D9B3488)
 I (../Inc/SetInputs.h)(0x61049AF6)
 I (../Inc/SetOutputs.h)(0x6109BD84)
 F (..\Inc\NormalOperation.h)(0x61045684)()
-F (../Src/main.c)(0x6109C2E5)(--c99 -c --cpu Cortex-M0 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_LichtController-IL:\Keil\Pack\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IL:\Keil\Pack\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include-D__UVISION_VERSION="529" -D_RTE_ -DSTM32F030x8 -DUSE_HAL_DRIVER -DSTM32F030x8-o lichtcontroller\main.o --omf_browse lichtcontroller\main.crf --depend lichtcontroller\main.d)
+F (../Src/main.c)(0x610E6834)(--c99 -c --cpu Cortex-M0 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_LichtController-IL:\Keil\Pack\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IL:\Keil\Pack\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include-D__UVISION_VERSION="529" -D_RTE_ -DSTM32F030x8 -DUSE_HAL_DRIVER -DSTM32F030x8-o lichtcontroller\main.o --omf_browse lichtcontroller\main.crf --depend lichtcontroller\main.d)
 I (../Inc/main.h)(0x6104A981)
 I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h)(0x60E0AA39)
 I (../Inc/stm32f0xx_hal_conf.h)(0x61045A85)
@@ -164,7 +164,7 @@ I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim.h)(0x60E0AA39)
 I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim_ex.h)(0x60E0AA39)
 I (../Inc/LichtController.h)(0x6109ADC4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5D9B3488)
-I (../Inc/Types.h)(0x6109AB16)
+I (../Inc/Types.h)(0x610D64C2)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5D9B3488)
 I (../Inc/SetInputs.h)(0x61049AF6)
 I (../Inc/SetOutputs.h)(0x6109BD84)
@@ -207,7 +207,7 @@ I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim_ex.h)(0x60E0AA39)
 I (../Inc/stm32f0xx_it.h)(0x61045A85)
 I (../Inc/LichtController.h)(0x6109ADC4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5D9B3488)
-I (../Inc/Types.h)(0x6109AB16)
+I (../Inc/Types.h)(0x610D64C2)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5D9B3488)
 I (../Inc/SetInputs.h)(0x61049AF6)
 I (../Inc/SetOutputs.h)(0x6109BD84)
@@ -246,8 +246,8 @@ I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_spi.h)(0x60E0AA39)
 I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_spi_ex.h)(0x60E0AA39)
 I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim.h)(0x60E0AA39)
 I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim_ex.h)(0x60E0AA39)
-F (..\Inc\Types.h)(0x6109AB16)()
-F (..\Src\SetOutputs.c)(0x6109C0FE)(--c99 -c --cpu Cortex-M0 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_LichtController-IL:\Keil\Pack\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IL:\Keil\Pack\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include-D__UVISION_VERSION="529" -D_RTE_ -DSTM32F030x8 -DUSE_HAL_DRIVER -DSTM32F030x8-o lichtcontroller\setoutputs.o --omf_browse lichtcontroller\setoutputs.crf --depend lichtcontroller\setoutputs.d)
+F (..\Inc\Types.h)(0x610D64C2)()
+F (..\Src\SetOutputs.c)(0x61190FA8)(--c99 -c --cpu Cortex-M0 -D__EVAL -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc -I ../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_LichtController-IL:\Keil\Pack\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IL:\Keil\Pack\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include-D__UVISION_VERSION="529" -D_RTE_ -DSTM32F030x8 -DUSE_HAL_DRIVER -DSTM32F030x8-o lichtcontroller\setoutputs.o --omf_browse lichtcontroller\setoutputs.crf --depend lichtcontroller\setoutputs.d)
 I (../Inc/main.h)(0x6104A981)
 I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h)(0x60E0AA39)
 I (../Inc/stm32f0xx_hal_conf.h)(0x61045A85)
@@ -284,7 +284,7 @@ I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim.h)(0x60E0AA39)
 I (../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_tim_ex.h)(0x60E0AA39)
 I (../Inc/LichtController.h)(0x6109ADC4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5D9B3488)
-I (../Inc/Types.h)(0x6109AB16)
+I (../Inc/Types.h)(0x610D64C2)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5D9B3488)
 I (../Inc/SetInputs.h)(0x61049AF6)
 I (../Inc/SetOutputs.h)(0x6109BD84)

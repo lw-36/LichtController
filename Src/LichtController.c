@@ -125,7 +125,6 @@ void ButtonHandler(void)
 		
 	ButtonPressedLongHandler(&ButtonSet);
 	ButtonPressedLongHandler(&ButtonMode);
-
 }
 
 void ButtonPressedLongHandler(Button_t* Button)
