@@ -22,17 +22,24 @@ void OverrideHandler(Output_t* Output);
 /***************Functions***************/
 void NormalOperation(void)
 {
-	if(StateSetOutputs)
+	if(operationState != StateSetOutputs && Inputs[CONFIGURATION_KILL_INPUT].Value >= (Inputs[CONFIGURATION_KILL_INPUT].maxValue - Inputs[CONFIGURATION_KILL_INPUT].minValue) + Inputs[CONFIGURATION_KILL_INPUT].minValue)
 	{
-//		for(uint8_t currentOutputNumber = 0; currentOutputNumber < 6; currentOutputNumber++)
-//		{
-//			currentOutput = &Outputs[currentOutputNumber];
-//			if(currentOutput->Override == OutputOROff)
-//				__HAL_TIM_SetCompare(currentOutput->timer, currentOutput->channel, 0);
-//			else if(currentOutput->Override == OutputOROn)
-//				__HAL_TIM_SetCompare(currentOutput->timer, currentOutput->channel, OUTPUT_RANGE);
-//		}
+		for(uint8_t i = 0; i < 6; i++)
+		{
+			if(!Outputs[i].ignoreKillswitch)
+			{
+				Outputs[i].Override = OutputOROff;
+			}
+		}
 	}
+	else
+	{
+		for(uint8_t i = 0; i < 6; i++)
+		{
+			Outputs[i].Override = OutputORNone;
+		}
+	}
+		
 	//StateNormal
 	{
 		if(ms_cntr % blinkMedium == 0)
@@ -75,7 +82,30 @@ void NormalOperation(void)
 					}
 					break;
 				case StateSetOutputs:
-					//HAL_GPIO_TogglePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin);
+					if(OutputSetParam == OutputSetBasicInput)
+					{
+						if(OutputToSet->ignoreKillswitch == true)
+							HAL_GPIO_TogglePin(Inputs[3].ledPort, Inputs[3].ledPin);
+					}
+//					switch(OutputSetParam)
+//					{
+//						case OutputSetBasicNone:
+//							break;
+//						case OutputSetBasicMode:
+//							break;
+//						case OutputSetBasicSubMode:
+//							break;
+//						case OutputSetBasicInput:
+//							break;
+//						case OutputSetAdvIntensity:
+//							break;
+//						case OutputSetAdvTransition:
+//							break;
+//						case OutputSetAdvInputRange:
+//							break;
+//						case OutputSetAdvPolarity:
+//							break;
+//					}
 					break;
 			}
 		}
@@ -134,6 +164,12 @@ void NormalOperation(void)
 					HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
 					HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_SET);
 				}
+				if(OutputSetParam == OutputSetBasicInput)
+				{
+					HAL_GPIO_TogglePin(Inputs[OutputToSet->assignedInput].ledPort, Inputs[OutputToSet->assignedInput].ledPin);
+					if(OutputToSet->ignoreKillswitch == false)
+						HAL_GPIO_TogglePin(Inputs[3].ledPort, Inputs[3].ledPin);
+				}
 			}	
 			for(uint8_t currentOutputNumber = 0; currentOutputNumber < 6; currentOutputNumber++)
 			{
@@ -179,10 +215,44 @@ void NormalOperation(void)
 
 void OnOffHandler(Output_t* Output)
 {
+	bool state;
 	if(Inputs[Output->assignedInput].Value > Output->lowSwitchingValue - INPUT_TOLERANCE && !Output->Invert)
-		__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, Output->minIntensity);
+		state = false;
 	else
-		__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, Output->maxIntensity);
+		state = true;
+	
+	if(state != Output->previousState)
+	{
+		Output->stateChanged = true;
+		Output->previousState = state;
+		Output->cntr = 1;
+	}
+	
+	if(Output->stateChanged)
+	{
+		if(!Output->Fade)
+		{
+			if(state == false)
+					__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, Output->minIntensity);
+			else
+					__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, Output->maxIntensity);
+		}
+		else
+		{
+			if(Output->cntr % Output->time == 0)
+			{
+				Output->stateChanged = false;
+				return;
+			}
+			uint16_t value;
+			if(state == false)
+				value = Output->maxIntensity - ((double)(Output->maxIntensity - Output->minIntensity)/(double)Output->time * (double)Output->cntr);
+			else
+				value = Output->minIntensity + ((double)(Output->maxIntensity - Output->minIntensity)/(double)Output->time * (double)Output->cntr);
+			
+			__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, value);
+		}
+	}	
 }
 
 void DimmHandler(Output_t* Output)
@@ -196,6 +266,7 @@ void DimmHandler(Output_t* Output)
 
 void BlinkHandler(Output_t* Output)
 {
+	bool state;
 	switch(Output->SubMode)
 	{
 		case BlinkStandard:
@@ -205,17 +276,42 @@ void BlinkHandler(Output_t* Output)
 				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->minIntensity);
 			break;
 		case BlinkOnce:
+			if(Output->cntr == 0)
+				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->maxIntensity);
+			else if(Output->cntr == 250)
+				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->minIntensity);
 			break;
 		case BlinkAntiColl:
+			if(Output->cntr == 0)
+				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->maxIntensity);
+			else if(Output->cntr == 250)
+				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->minIntensity);
+			else if(Output->cntr == 500)
+				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->maxIntensity);
+			else if(Output->cntr == 750)
+				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->minIntensity);
 			break;
 		case BlinkBeacon:
+			if(Output->cntr % Output->time == 0)
+				state = !state;
+			
+			uint16_t value;
+			if(state == false)
+				value = Output->maxIntensity - ((double)(Output->maxIntensity - Output->minIntensity)/(double)Output->time * (double)Output->cntr);
+			else
+				value = Output->minIntensity + ((double)(Output->maxIntensity - Output->minIntensity)/(double)Output->time * (double)Output->cntr);
+			
+			__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, value);
 			break;
 	}
 }
 
 void FixHandler(Output_t* Output)
 {
-	__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, Output->maxIntensity);
+	if(!Output->Invert)
+		__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, Output->maxIntensity);
+	else
+		__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, Output->minIntensity);
 }
 
 void OverrideHandler(Output_t* Output)

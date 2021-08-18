@@ -51,8 +51,8 @@ void ConfigInputs(void)
 	{
 		if(Inputs[i].Mode == InputNone)
 		{
-			Inputs[i].minValue = 65535;
-			Inputs[i].maxValue = 0;
+			Inputs[i].minValue = 1500;
+			Inputs[i].maxValue = 1501;
 		}
 		else
 			HAL_GPIO_WritePin(Inputs[i].ledPort, Inputs[i].ledPin, GPIO_PIN_SET);
@@ -94,6 +94,14 @@ void ConfigOutputs(void)
 	Output4->channel = TIM_CHANNEL_4;
 	Output5->channel = TIM_CHANNEL_1;
 	Output6->channel = TIM_CHANNEL_2;
+	
+	for(uint8_t i = 0; i < 6; i++)
+	{
+		Outputs[i].maxIntensity = 65535;
+		Outputs[i].time = 5000;
+		Outputs[i].lowSwitchingValue = 1500;
+		Outputs[i].highSwitchingValue = 2500;
+	}
 }
 
 void ButtonHandler(void)

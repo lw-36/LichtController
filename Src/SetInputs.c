@@ -18,7 +18,38 @@ InputSet_t InputSetParam = InputSetNone;
 /***************Functions***************/
 void SetInputsFunc(void)
 {
-	switch(InputSetParam)
+	if(ButtonMode.ButtonPressedLong)
+	{
+		if(ButtonMode.ButtonPressed)
+		{
+			HAL_GPIO_WritePin(InputToSet->ledPort, InputToSet->ledPin, GPIO_PIN_SET);
+			setInputRange(InputToSet);
+		}
+		else
+		{
+			ButtonMode.ButtonPressedLong = false;
+			ButtonMode.ButtonChanged = false;
+		}
+	}
+	
+	if(ButtonMode.ButtonChanged)
+	{
+		ButtonMode.ButtonChanged = false;
+		InputToSetNumber = (InputToSetNumber + 1) % 4;
+		if(InputToSet->Mode == InputNone)
+			HAL_GPIO_WritePin(InputToSet->ledPort, InputToSet->ledPin, GPIO_PIN_RESET);
+		else
+			HAL_GPIO_WritePin(InputToSet->ledPort, InputToSet->ledPin, GPIO_PIN_SET);
+		
+		InputToSet = &Inputs[InputToSetNumber];
+	}
+	else if(ButtonSet.ButtonChanged)
+	{
+		ButtonSet.ButtonChanged = false;
+		InputSetParam = InputSetMode;
+	}
+			
+/*	switch(InputSetParam)
 	{
 		case InputSetNone:
 			if(ButtonMode.ButtonChanged)
@@ -63,7 +94,7 @@ void SetInputsFunc(void)
 				InputSetParam = InputSetNone;
 			}
 			break;
-	}
+	}*/
 	return;
 }
 

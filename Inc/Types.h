@@ -81,6 +81,9 @@ typedef struct
 	OutputOverride_t Override;
 	uint32_t time;
 	uint32_t cntr;
+	bool stateChanged;
+	bool previousState;
+	bool ignoreKillswitch;
 }Output_t;
 
 typedef struct

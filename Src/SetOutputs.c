@@ -80,12 +80,19 @@ void SetOutputsFunc(void)
 			if(ButtonMode.ButtonChanged)
 			{
 				ButtonMode.ButtonChanged = false;
-				OutputToSet->assignedInput = (OutputToSet->assignedInput + 1) % 4;
+				HAL_GPIO_WritePin(Inputs[OutputToSet->assignedInput].ledPort, Inputs[OutputToSet->assignedInput].ledPin, GPIO_PIN_RESET);
+				OutputToSet->assignedInput = (OutputToSet->assignedInput + 1) % 3;
 			}
 			else if(ButtonSet.ButtonChanged)
 			{
 				ButtonSet.ButtonChanged = false;
+				HAL_GPIO_WritePin(Inputs[OutputToSet->assignedInput].ledPort, Inputs[OutputToSet->assignedInput].ledPin, GPIO_PIN_SET);
 				OutputSetParam = OutputSetBasicNone;
+			}
+			if(ButtonMode.ButtonPressedLong)
+			{
+				ButtonMode.ButtonPressedLong = false;
+				OutputToSet->ignoreKillswitch = !OutputToSet->ignoreKillswitch;
 			}
 			break;
 			
@@ -105,6 +112,7 @@ void SetOutputsFunc(void)
 		case OutputSetAdvTransition:
 			if(ButtonMode.ButtonChanged)
 			{
+				OutputToSet->Fade = !OutputToSet->Fade;
 				ButtonMode.ButtonChanged = false;
 			}
 			else if(ButtonSet.ButtonChanged)
