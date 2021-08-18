@@ -17,6 +17,7 @@ OutputSet_t OutputSetParam = OutputSetBasicNone;
 /***************Functions***************/
 void SetOutputsFunc(void)
 {
+	static bool delValues = false;
 	switch(OutputSetParam)
 	{
 		// Basic Settings
@@ -100,13 +101,23 @@ void SetOutputsFunc(void)
 		case OutputSetAdvIntensity:
 			if(ButtonMode.ButtonPressed)
 			{
+				if(delValues == false)
+				{
+					delValues = true;
+					OutputToSet->minIntensity = 65535;
+					OutputToSet->maxIntensity = 0;
+				}
 				SetOutputIntensityRange(OutputToSet, &Inputs[CONFIGURATION_KILL_INPUT]);
 			}
-			else if(ButtonSet.ButtonChanged)
+			else
 			{
-				ButtonSet.ButtonChanged = false;
-				ButtonMode.ButtonChanged = false;
-				OutputSetParam = OutputSetAdvTransition;
+				delValues = false;
+				if(ButtonSet.ButtonChanged)
+				{
+					ButtonSet.ButtonChanged = false;
+					ButtonMode.ButtonChanged = false;
+					OutputSetParam = OutputSetAdvTransition;
+				}
 			}
 			break;
 		case OutputSetAdvTransition:
@@ -124,13 +135,23 @@ void SetOutputsFunc(void)
 		case OutputSetAdvInputRange:
 			if(ButtonMode.ButtonPressed)
 			{
+				if(delValues == false)
+				{
+					delValues = true;
+					OutputToSet->minIntensity = 65535;
+					OutputToSet->maxIntensity = 0;
+				}
 				SetOutputInputRange(OutputToSet, &Inputs[OutputToSet->assignedInput]);
 			}
-			else if(ButtonSet.ButtonChanged)
+			else
 			{
-				ButtonSet.ButtonChanged = false;
-				ButtonMode.ButtonChanged = false;
-				OutputSetParam = OutputSetAdvPolarity;
+				delValues = false;
+				if(ButtonSet.ButtonChanged)
+				{
+					ButtonSet.ButtonChanged = false;
+					ButtonMode.ButtonChanged = false;
+					OutputSetParam = OutputSetAdvPolarity;
+				}
 			}
 			break;
 		case OutputSetAdvPolarity:
@@ -170,4 +191,29 @@ void SetOutputInputRange(Output_t* Output, Input_t* Input)
 	{
 		Output->lowSwitchingValue = currentValue;
 	}
+}
+
+void SaveOutputConfig(void)
+{
+	volatile uint16_t size = sizeof(Outputs);
+	volatile uint32_t* rdAddress = (uint32_t*)Outputs;
+	volatile uint32_t wrAddress = 0x0800F400;
+	HAL_FLASH_Unlock();
+	FLASH_EraseInitTypeDef test;
+	test.TypeErase = FLASH_TYPEERASE_PAGES;
+	test.PageAddress = 0x0800F400;
+	test.NbPages = 1;
+	uint32_t out;
+	HAL_FLASHEx_Erase(&test, &out);
+	
+	uint16_t i = 0;
+	while(i < size)
+	{
+		HAL_StatusTypeDef retVal = HAL_FLASH_Program(TYPEPROGRAM_WORD, wrAddress, *rdAddress);
+		wrAddress += 4;
+		rdAddress += 1;
+		i += 4;
+	}
+	
+	HAL_FLASH_Lock();
 }

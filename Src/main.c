@@ -210,6 +210,7 @@ int main(void)
 				if(ButtonSet.ButtonPressedLong)
 					{
 						ButtonSet.ButtonPressedLong = false;
+						SaveOutputConfig();
 						OutputToSet->Override = OutputOROff;
 						HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
 						HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_SET);

@@ -22,7 +22,7 @@ void OverrideHandler(Output_t* Output);
 /***************Functions***************/
 void NormalOperation(void)
 {
-	if(operationState != StateSetOutputs && Inputs[CONFIGURATION_KILL_INPUT].Value >= (Inputs[CONFIGURATION_KILL_INPUT].maxValue - Inputs[CONFIGURATION_KILL_INPUT].minValue) + Inputs[CONFIGURATION_KILL_INPUT].minValue)
+	if(operationState != StateSetOutputs && Inputs[CONFIGURATION_KILL_INPUT].Value >= 4095/2)
 	{
 		for(uint8_t i = 0; i < 6; i++)
 		{
@@ -32,7 +32,7 @@ void NormalOperation(void)
 			}
 		}
 	}
-	else
+	else if(operationState != StateSetOutputs)
 	{
 		for(uint8_t i = 0; i < 6; i++)
 		{
@@ -199,7 +199,10 @@ void NormalOperation(void)
 					DimmHandler(currentOutput);
 					break;
 				case OutputBlink:
-					BlinkHandler(currentOutput);
+					if((Inputs[currentOutput->assignedInput].Value > currentOutput->lowSwitchingValue && Inputs[currentOutput->assignedInput].Value < currentOutput->highSwitchingValue) ^ currentOutput->Invert)
+						BlinkHandler(currentOutput);
+					else
+						__HAL_TIM_SET_COMPARE(currentOutput->timer, currentOutput->channel, currentOutput->minIntensity);
 					break;
 				case OutputFix:
 					FixHandler(currentOutput);
@@ -242,7 +245,7 @@ void OnOffHandler(Output_t* Output)
 			if(Output->cntr % Output->time == 0)
 			{
 				Output->stateChanged = false;
-				return;
+				//return;
 			}
 			uint16_t value;
 			if(state == false)
@@ -266,7 +269,7 @@ void DimmHandler(Output_t* Output)
 
 void BlinkHandler(Output_t* Output)
 {
-	bool state;
+	static bool state = false;
 	switch(Output->SubMode)
 	{
 		case BlinkStandard:
@@ -278,17 +281,17 @@ void BlinkHandler(Output_t* Output)
 		case BlinkOnce:
 			if(Output->cntr == 0)
 				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->maxIntensity);
-			else if(Output->cntr == 250)
+			else if(Output->cntr == 100)
 				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->minIntensity);
 			break;
 		case BlinkAntiColl:
 			if(Output->cntr == 0)
 				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->maxIntensity);
-			else if(Output->cntr == 250)
+			else if(Output->cntr == 100)
 				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->minIntensity);
-			else if(Output->cntr == 500)
+			else if(Output->cntr == 200)
 				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->maxIntensity);
-			else if(Output->cntr == 750)
+			else if(Output->cntr == 300)
 				__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->minIntensity);
 			break;
 		case BlinkBeacon:
