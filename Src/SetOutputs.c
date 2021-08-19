@@ -54,9 +54,18 @@ void SetOutputsFunc(void)
 			{
 				ButtonSet.ButtonChanged = false;
 				if(OutputToSet->Mode == OutputBlink || OutputToSet->Mode == OutputOnOff)
-					OutputSetParam = OutputSetBasicSubMode;
+				{
+					if(OutputToSet->Mode == OutputBlink)
+						OutputSetParam = OutputSetBasicSubMode;
+					else
+						OutputSetParam = OutputSetBasicInput;
+					OutputToSet->time = 0;
+				}
 				else
-					OutputSetParam = OutputSetBasicSubMode;
+				{
+					OutputSetParam = OutputSetBasicInput;
+					OutputToSet->time = 2000;
+				}
 			}
 			break;
 		case OutputSetBasicSubMode:
@@ -89,6 +98,16 @@ void SetOutputsFunc(void)
 			{
 				ButtonSet.ButtonChanged = false;
 				HAL_GPIO_WritePin(Inputs[OutputToSet->assignedInput].ledPort, Inputs[OutputToSet->assignedInput].ledPin, GPIO_PIN_SET);
+				if(OutputToSet->Mode == OutputDimm)
+				{
+					OutputToSet->lowSwitchingValue = 0;
+					OutputToSet->highSwitchingValue = 4195;
+				}
+				else if(OutputToSet->Mode != OutputFix)
+				{
+					OutputToSet->lowSwitchingValue = 2048;
+					OutputToSet->highSwitchingValue = 4195;
+				}
 				OutputSetParam = OutputSetBasicNone;
 			}
 			if(ButtonMode.ButtonPressedLong)
@@ -100,39 +119,41 @@ void SetOutputsFunc(void)
 			
 		//Advanced Settings	
 		case OutputSetAdvIntensity:
-			if(ButtonMode.ButtonPressedLong)
+			if(ButtonMode.ButtonPressedLong && !ButtonMode.ButtonChanged)
 			{
-				OutputToSet->Override = OutputOROn;
+				OutputToSet->Override = OutputORMax;
 			}
 			else if(ButtonMode.ButtonChanged && ButtonMode.ButtonPressedLong)
 			{
 				ButtonMode.ButtonPressedLong = false;
 				ButtonMode.ButtonChanged = false;
-				delValues = !delValues;
-				setTopValue = false;
+				delValues = true;
+				setTopValue = true;
 			}
-			else if(ButtonMode.ButtonChanged && delValues)
+			else if(delValues && ButtonMode.ButtonChanged)
 			{
+				ButtonMode.ButtonChanged = false;
 				if(setTopValue)
-					setTopValue = true;
-				else
 				{
 					setTopValue = false;
+					OutputToSet->Override = OutputORMin;
+				}
+				else
+				{
+					OutputToSet->Override = OutputORNone;
 					delValues = false;
+					ButtonSet.ButtonChanged = false;
 				}
 			}
 			if(delValues)
 				SetOutputIntensityRange(OutputToSet, &Inputs[CONFIGURATION_KILL_INPUT], setTopValue);
-			/*else
+			
+			if(ButtonSet.ButtonChanged && !delValues)
 			{
-				delValues = false;
-				if(ButtonSet.ButtonChanged)
-				{
-					ButtonSet.ButtonChanged = false;
-					ButtonMode.ButtonChanged = false;
-					OutputSetParam = OutputSetAdvTransition;
-				}
-			}*/
+				ButtonSet.ButtonChanged = false;
+				ButtonMode.ButtonChanged = false;
+				OutputSetParam = OutputSetAdvTransition;
+			}
 			break;
 		case OutputSetAdvTransition:
 			if(ButtonMode.ButtonPressed)
@@ -153,8 +174,8 @@ void SetOutputsFunc(void)
 				if(delValues == false)
 				{
 					delValues = true;
-					OutputToSet->minIntensity = 65535;
-					OutputToSet->maxIntensity = 0;
+					OutputToSet->lowSwitchingValue = 4195;
+					OutputToSet->highSwitchingValue = 0;
 				}
 				SetOutputInputRange(OutputToSet, &Inputs[OutputToSet->assignedInput]);
 			}
@@ -186,7 +207,11 @@ void SetOutputsFunc(void)
 
 void SetOutputIntensityRange(Output_t* Output, Input_t* Input, bool SetHighValue)
 {
-	uint16_t currentIntensity = ((double)Input->Value / (double)(INPUT_SCALED_RANGE)) * (double)OUTPUT_RANGE;
+	uint16_t currentIntensity = 0;
+	if(SetHighValue)
+		currentIntensity = Output->minIntensity + ((double)Input->Value / (double)(INPUT_SCALED_RANGE)) * (double)(OUTPUT_RANGE - Output->minIntensity);
+	else
+		currentIntensity = ((double)Input->Value / (double)(INPUT_SCALED_RANGE)) * (double)Output->maxIntensity;
 	if(SetHighValue)
 		Output->maxIntensity = currentIntensity;
 	else

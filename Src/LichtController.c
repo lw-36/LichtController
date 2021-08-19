@@ -83,6 +83,13 @@ void ConfigOutputs(void)
 	extern TIM_HandleTypeDef htim3;
 	extern TIM_HandleTypeDef htim15;
 	LoadOutputConfig();
+	/*for(uint8_t i = 0; i < 6; i++)
+	{
+		Outputs[i].maxIntensity = 65535;
+		Outputs[i].time = 2000;
+		Outputs[i].lowSwitchingValue = 1500;
+		Outputs[i].highSwitchingValue = 2500;
+	}*/
 	Output1->timer = &htim3;
 	Output2->timer = &htim3;
 	Output3->timer = &htim3;
@@ -97,13 +104,6 @@ void ConfigOutputs(void)
 	Output5->channel = TIM_CHANNEL_1;
 	Output6->channel = TIM_CHANNEL_2;
 	
-	/*for(uint8_t i = 0; i < 6; i++)
-	{
-		Outputs[i].maxIntensity = 65535;
-		Outputs[i].time = 5000;
-		Outputs[i].lowSwitchingValue = 1500;
-		Outputs[i].highSwitchingValue = 2500;
-	}*/
 }
 
 void ButtonHandler(void)
@@ -169,7 +169,7 @@ void LoadInputConfig(void)
 void LoadOutputConfig(void)
 {
 	 uint16_t size = sizeof(Outputs)/6;
-	 uint32_t* wrAddress = (uint32_t*)Inputs;
+	 uint32_t* wrAddress = (uint32_t*)Outputs;
 	 uint32_t rdAddress = 0x0800F400;
 	
 	uint16_t i = 0;

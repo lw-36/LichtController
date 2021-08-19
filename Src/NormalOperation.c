@@ -87,25 +87,6 @@ void NormalOperation(void)
 						if(OutputToSet->ignoreKillswitch == true)
 							HAL_GPIO_TogglePin(Inputs[3].ledPort, Inputs[3].ledPin);
 					}
-//					switch(OutputSetParam)
-//					{
-//						case OutputSetBasicNone:
-//							break;
-//						case OutputSetBasicMode:
-//							break;
-//						case OutputSetBasicSubMode:
-//							break;
-//						case OutputSetBasicInput:
-//							break;
-//						case OutputSetAdvIntensity:
-//							break;
-//						case OutputSetAdvTransition:
-//							break;
-//						case OutputSetAdvInputRange:
-//							break;
-//						case OutputSetAdvPolarity:
-//							break;
-//					}
 					break;
 			}
 		}
@@ -233,7 +214,7 @@ void OnOffHandler(Output_t* Output)
 	
 	if(Output->stateChanged)
 	{
-		if(!Output->Fade)
+		if(Output->time <= 10)
 		{
 			if(state == false)
 					__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, Output->minIntensity);
@@ -245,7 +226,7 @@ void OnOffHandler(Output_t* Output)
 			if(Output->cntr % Output->time == 0)
 			{
 				Output->stateChanged = false;
-				//return;
+				return;
 			}
 			uint16_t value;
 			if(state == false)
@@ -323,4 +304,8 @@ void OverrideHandler(Output_t* Output)
 		__HAL_TIM_SetCompare(Output->timer, Output->channel, 0);
 	else if(Output->Override == OutputOROn)
 		__HAL_TIM_SetCompare(Output->timer, Output->channel, OUTPUT_RANGE);
+	else if(Output->Override == OutputORMin)
+		__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->minIntensity);
+	else if(Output->Override == OutputORMax)
+		__HAL_TIM_SetCompare(Output->timer, Output->channel, Output->maxIntensity);
 }
