@@ -219,7 +219,7 @@ void NormalOperation(void)
 void OnOffHandler(Output_t* Output)
 {
 	bool state;
-	if(Inputs[Output->assignedInput].Value > Output->lowSwitchingValue - INPUT_TOLERANCE && !Output->Invert)
+	if(Inputs[Output->assignedInput].Value > Output->lowSwitchingValue && Inputs[Output->assignedInput].Value < Output->highSwitchingValue && !Output->Invert)
 		state = false;
 	else
 		state = true;

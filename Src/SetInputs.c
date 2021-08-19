@@ -43,13 +43,13 @@ void SetInputsFunc(void)
 		
 		InputToSet = &Inputs[InputToSetNumber];
 	}
-	else if(ButtonSet.ButtonChanged)
+	/*else if(ButtonSet.ButtonChanged)
 	{
 		ButtonSet.ButtonChanged = false;
 		InputSetParam = InputSetMode;
 	}
 			
-/*	switch(InputSetParam)
+	switch(InputSetParam)
 	{
 		case InputSetNone:
 			if(ButtonMode.ButtonChanged)
@@ -101,10 +101,10 @@ void SetInputsFunc(void)
 
 void setInputRange(Input_t* Input)
 {
-	if(Input->unscaledValue < Input->minValue + INPUT_TOLERANCE)
-		Input->minValue = Input->unscaledValue + INPUT_TOLERANCE;
-	if(Input->unscaledValue > Input->maxValue - INPUT_TOLERANCE)
-		Input->maxValue = Input->unscaledValue - INPUT_TOLERANCE;
+	if(Input->unscaledValue < Input->minValueUnscaled + INPUT_TOLERANCE)
+		Input->minValueUnscaled = Input->unscaledValue + INPUT_TOLERANCE;
+	if(Input->unscaledValue > Input->maxValueUnscaled - INPUT_TOLERANCE)
+		Input->maxValueUnscaled = Input->unscaledValue - INPUT_TOLERANCE;
 	return;
 }
 

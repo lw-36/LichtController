@@ -18,6 +18,7 @@ OutputSet_t OutputSetParam = OutputSetBasicNone;
 void SetOutputsFunc(void)
 {
 	static bool delValues = false;
+	static bool setTopValue = false;
 	switch(OutputSetParam)
 	{
 		// Basic Settings
@@ -99,17 +100,30 @@ void SetOutputsFunc(void)
 			
 		//Advanced Settings	
 		case OutputSetAdvIntensity:
-			if(ButtonMode.ButtonPressed)
+			if(ButtonMode.ButtonPressedLong)
 			{
-				if(delValues == false)
-				{
-					delValues = true;
-					OutputToSet->minIntensity = 65535;
-					OutputToSet->maxIntensity = 0;
-				}
-				SetOutputIntensityRange(OutputToSet, &Inputs[CONFIGURATION_KILL_INPUT]);
+				OutputToSet->Override = OutputOROn;
 			}
-			else
+			else if(ButtonMode.ButtonChanged && ButtonMode.ButtonPressedLong)
+			{
+				ButtonMode.ButtonPressedLong = false;
+				ButtonMode.ButtonChanged = false;
+				delValues = !delValues;
+				setTopValue = false;
+			}
+			else if(ButtonMode.ButtonChanged && delValues)
+			{
+				if(setTopValue)
+					setTopValue = true;
+				else
+				{
+					setTopValue = false;
+					delValues = false;
+				}
+			}
+			if(delValues)
+				SetOutputIntensityRange(OutputToSet, &Inputs[CONFIGURATION_KILL_INPUT], setTopValue);
+			/*else
 			{
 				delValues = false;
 				if(ButtonSet.ButtonChanged)
@@ -118,12 +132,13 @@ void SetOutputsFunc(void)
 					ButtonMode.ButtonChanged = false;
 					OutputSetParam = OutputSetAdvTransition;
 				}
-			}
+			}*/
 			break;
 		case OutputSetAdvTransition:
-			if(ButtonMode.ButtonChanged)
+			if(ButtonMode.ButtonPressed)
 			{
-				OutputToSet->Fade = !OutputToSet->Fade;
+				OutputToSet->time = (double)Inputs[CONFIGURATION_KILL_INPUT].Value / (double)INPUT_SCALED_RANGE * (double)8000;
+				//OutputToSet->Fade = !OutputToSet->Fade;
 				ButtonMode.ButtonChanged = false;
 			}
 			else if(ButtonSet.ButtonChanged)
@@ -169,27 +184,32 @@ void SetOutputsFunc(void)
 	}
 }
 
-void SetOutputIntensityRange(Output_t* Output, Input_t* Input)
+void SetOutputIntensityRange(Output_t* Output, Input_t* Input, bool SetHighValue)
 {
 	uint16_t currentIntensity = ((double)Input->Value / (double)(INPUT_SCALED_RANGE)) * (double)OUTPUT_RANGE;
-	if(currentIntensity > Output->maxIntensity)
+	if(SetHighValue)
+		Output->maxIntensity = currentIntensity;
+	else
+		Output->minIntensity = currentIntensity;
+		
+	/*if(currentIntensity > Output->maxIntensity)
 	{
 		Output->maxIntensity = currentIntensity;
 	}
 	else if(currentIntensity < Output->minIntensity)
-		Output->minIntensity = currentIntensity;
+		Output->minIntensity = currentIntensity;*/
 }
 
 void SetOutputInputRange(Output_t* Output, Input_t* Input)
 {
 	int16_t currentValue = Input->Value;
-	if(currentValue > Output->highSwitchingValue)
+	if(currentValue + 3 > Output->highSwitchingValue)
 	{
-		Output->highSwitchingValue = currentValue;
+		Output->highSwitchingValue = currentValue + 3;
 	}
-	else if(currentValue < Output->lowSwitchingValue)
+	else if(currentValue - 3 < Output->lowSwitchingValue)
 	{
-		Output->lowSwitchingValue = currentValue;
+		Output->lowSwitchingValue = currentValue - 3;
 	}
 }
 

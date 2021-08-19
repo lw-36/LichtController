@@ -30,8 +30,8 @@ typedef struct
 typedef struct
 {
 	InputModes_t Mode;
-	uint16_t minValue;
-	uint16_t maxValue;
+	uint16_t minValueUnscaled;
+	uint16_t maxValueUnscaled;
 	uint16_t unscaledValue;
 	int16_t Value;
 	GPIO_TypeDef* ledPort;

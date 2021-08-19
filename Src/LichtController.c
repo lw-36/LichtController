@@ -10,6 +10,7 @@
 /**********Function Prototypes**********/
 void ButtonPressedLongHandler(Button_t* Button);
 void LoadInputConfig(void);
+void LoadOutputConfig(void);
 
 /***************Variables***************/
 Input_t Inputs[4];
@@ -51,8 +52,8 @@ void ConfigInputs(void)
 	{
 		if(Inputs[i].Mode == InputNone)
 		{
-			Inputs[i].minValue = 1500;
-			Inputs[i].maxValue = 1501;
+			Inputs[i].minValueUnscaled = 1500;
+			Inputs[i].maxValueUnscaled = 1501;
 		}
 		else
 			HAL_GPIO_WritePin(Inputs[i].ledPort, Inputs[i].ledPin, GPIO_PIN_SET);
@@ -81,6 +82,7 @@ void ConfigOutputs(void)
 {
 	extern TIM_HandleTypeDef htim3;
 	extern TIM_HandleTypeDef htim15;
+	LoadOutputConfig();
 	Output1->timer = &htim3;
 	Output2->timer = &htim3;
 	Output3->timer = &htim3;
@@ -95,13 +97,13 @@ void ConfigOutputs(void)
 	Output5->channel = TIM_CHANNEL_1;
 	Output6->channel = TIM_CHANNEL_2;
 	
-	for(uint8_t i = 0; i < 6; i++)
+	/*for(uint8_t i = 0; i < 6; i++)
 	{
 		Outputs[i].maxIntensity = 65535;
 		Outputs[i].time = 5000;
 		Outputs[i].lowSwitchingValue = 1500;
 		Outputs[i].highSwitchingValue = 2500;
-	}
+	}*/
 }
 
 void ButtonHandler(void)
@@ -164,3 +166,16 @@ void LoadInputConfig(void)
 	}
 }
 
+void LoadOutputConfig(void)
+{
+	 uint16_t size = sizeof(Outputs)/6;
+	 uint32_t* wrAddress = (uint32_t*)Inputs;
+	 uint32_t rdAddress = 0x0800F400;
+	
+	uint16_t i = 0;
+	while(i<size)
+	{
+		memcpy(wrAddress + i, (uint32_t*)(rdAddress + i*4), 4);
+		i++;
+	}
+}
