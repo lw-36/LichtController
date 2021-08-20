@@ -72,8 +72,7 @@ static void MX_TIM3_Init(void);
 static void MX_TIM15_Init(void);
 static void MX_TIM6_Init(void);
 /* USER CODE BEGIN PFP */
-
-
+void restoreConfiguration(void);
 
 /* USER CODE END PFP */
 
@@ -145,7 +144,11 @@ int main(void)
 	HAL_TIM_Base_Start_IT(&htim6);
 	
 	HAL_Delay(10);
-	if(HAL_GPIO_ReadPin(ButtonSet.ButtonPort, ButtonSet.ButtonPin) == GPIO_PIN_SET)
+	if(HAL_GPIO_ReadPin(ButtonSet.ButtonPort, ButtonSet.ButtonPin) == GPIO_PIN_SET && HAL_GPIO_ReadPin(ButtonMode.ButtonPort, ButtonMode.ButtonPin) == GPIO_PIN_SET)
+	{
+		restoreConfiguration();
+	}
+	else if(HAL_GPIO_ReadPin(ButtonSet.ButtonPort, ButtonSet.ButtonPin) == GPIO_PIN_SET)
 	{
 		InputToSet = &Inputs[0];
 		operationState = StateSetInputs;
@@ -218,39 +221,7 @@ int main(void)
 					}
 				break;
 		}
-		/*HAL_Delay(250);
-		HAL_GPIO_TogglePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin);*/
-		
-		/*int32_t i=0;
-		HAL_Delay(1);
-		i = Input1.Value * OUTPUT_RANGE / (INPUT_SCALED_RANGE);
-		if(i < 0)
-			i = 0;
-		else if(i > OUTPUT_RANGE)
-			i = OUTPUT_RANGE;
-		TIM3->CCR1 = i;
-		TIM3->CCR2 = i;
-		TIM3->CCR3 = i;
-		TIM3->CCR4 = i;
-		TIM15->CCR1 = i;
-		TIM15->CCR2 = i;
-		
-		//HAL_TIM_PWM_ConfigChannel(&htim3, &test, TIM_CHANNEL_1);
-		//__HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, i);
-		if(HAL_GPIO_ReadPin(ButtonSet_GPIO_Port, ButtonSet_Pin) == GPIO_PIN_SET)
-			HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_RESET);
-		else
-			HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
-		
-		//if(HAL_GPIO_ReadPin(ButtonMode_GPIO_Port, ButtonMode_Pin) == GPIO_PIN_SET)
-		if(Input1.Value >= INPUT_SCALED_RANGE / 2)
-			HAL_GPIO_WritePin(IN1_LED_GPIO_Port, IN1_LED_Pin, GPIO_PIN_RESET);
-		else                                   
-			HAL_GPIO_WritePin(IN1_LED_GPIO_Port, IN1_LED_Pin, GPIO_PIN_SET);*/
-			
- 		//HAL_Delay(250);
-		
-    /* USER CODE END WHILE */
+		/* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
@@ -762,7 +733,59 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void restoreConfiguration(void)
+{
+	uint16_t ms10cntr = 0;
+	HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
+	do
+	{
+		if(ms_cntr % 250 == 0)
+		{
+			ms10cntr += 25;
+			if(ms10cntr <= 400)
+				HAL_GPIO_TogglePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin);
+			else
+			{
+				HAL_GPIO_TogglePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin);
+				HAL_GPIO_TogglePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin);
+			}
+		}
+		if(ms10cntr + 1 % 800 == 0)
+		{
+			HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_RESET);
+			HAL_FLASH_Unlock();
+			FLASH_EraseInitTypeDef test;
+			test.TypeErase = FLASH_TYPEERASE_PAGES;
+			test.PageAddress = 0x0800F000;
+			test.NbPages = 2;
+			uint32_t out;
+			HAL_FLASHEx_Erase(&test, &out);
+		}
+		if(ButtonSet.ButtonChanged || ButtonMode.ButtonChanged || ms10cntr >= 900)
+		{
+			HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
+			return;
+		}
+	}while(1);
+	//Create Sample Configuration
+	//Inputs
+	for(uint8_t i = 0; i < 4; i++)
+	{
+		Inputs[i].minValueUnscaled = 1000;
+		Inputs[i].maxValueUnscaled = 2000;
+	}
+	//Outputs
+	for(uint8_t i = 0; i < 6; i++)
+	{
+		Outputs[i].Mode = Output
+	}
+	
+	return;
+}
 
 /* USER CODE END 4 */
 
