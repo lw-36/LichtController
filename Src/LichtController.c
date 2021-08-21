@@ -46,17 +46,25 @@ void ConfigInputs(void)
 	//Config PWM-Inputs
 	{
 	LoadInputConfig();
+	Input1->ledPort = IN1_LED_GPIO_Port;
+	Input1->ledPin = IN1_LED_Pin;
+	Input2->ledPort = IN2_LED_GPIO_Port;
+	Input2->ledPin = IN2_LED_Pin;
+	Input3->ledPort = IN3_LED_GPIO_Port;
+	Input3->ledPin = IN3_LED_Pin;
+	Input4->ledPort = IN4_LED_GPIO_Port;
+	Input4->ledPin = IN4_LED_Pin;
 	extern TIM_HandleTypeDef htim1;
 	
 	for(uint8_t i = 0; i < 4; i++)
 	{
-		if(Inputs[i].Mode == InputNone)
+		/*if(Inputs[i].Mode == InputNone)
 		{
 			Inputs[i].minValueUnscaled = 1500;
 			Inputs[i].maxValueUnscaled = 1501;
 		}
-		else
-			HAL_GPIO_WritePin(Inputs[i].ledPort, Inputs[i].ledPin, GPIO_PIN_SET);
+		else*/
+		HAL_GPIO_WritePin(Inputs[i].ledPort, Inputs[i].ledPin, GPIO_PIN_SET);
 		Inputs[i].Value = 0;
 		Inputs[i].LLInput.risingEdgeNext = true;
 		Inputs[i].LLInput.timer = &htim1;
@@ -83,13 +91,13 @@ void ConfigOutputs(void)
 	extern TIM_HandleTypeDef htim3;
 	extern TIM_HandleTypeDef htim15;
 	LoadOutputConfig();
-	/*for(uint8_t i = 0; i < 6; i++)
+	for(uint8_t i = 0; i < 6; i++)
 	{
-		Outputs[i].maxIntensity = 65535;
-		Outputs[i].time = 2000;
+		Outputs[i].Override = OutputORNone;
+		/*Outputs[i].time = 2000;
 		Outputs[i].lowSwitchingValue = 1500;
-		Outputs[i].highSwitchingValue = 2500;
-	}*/
+		Outputs[i].highSwitchingValue = 2500;*/
+	}
 	Output1->timer = &htim3;
 	Output2->timer = &htim3;
 	Output3->timer = &htim3;

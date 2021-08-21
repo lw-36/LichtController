@@ -13,7 +13,6 @@ void setInputRange(Input_t* Input);
 /***************Variables***************/
 uint8_t InputToSetNumber = 0;
 Input_t* InputToSet;
-InputSet_t InputSetParam = InputSetNone;
 
 /***************Functions***************/
 void SetInputsFunc(void)
@@ -35,12 +34,7 @@ void SetInputsFunc(void)
 	if(ButtonMode.ButtonChanged)
 	{
 		ButtonMode.ButtonChanged = false;
-		InputToSetNumber = (InputToSetNumber + 1) % 4;
-		if(InputToSet->Mode == InputNone)
-			HAL_GPIO_WritePin(InputToSet->ledPort, InputToSet->ledPin, GPIO_PIN_RESET);
-		else
-			HAL_GPIO_WritePin(InputToSet->ledPort, InputToSet->ledPin, GPIO_PIN_SET);
-		
+		InputToSetNumber = (InputToSetNumber + 1) % 4;		
 		InputToSet = &Inputs[InputToSetNumber];
 	}
 	/*else if(ButtonSet.ButtonChanged)

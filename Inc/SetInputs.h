@@ -11,7 +11,6 @@
 
 
 /***************Variables***************/
-extern InputSet_t InputSetParam;
 extern Input_t* InputToSet;
 
 /**********Function Prototypes**********/

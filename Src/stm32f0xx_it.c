@@ -169,6 +169,7 @@ void TIM1_CC_IRQHandler(void)
 			else if(CurrentInput->Value >= INPUT_SCALED_RANGE)
 				CurrentInput->Value = INPUT_SCALED_RANGE;
 	}
+	CurrentInput->timeoutCntr = 0;
   /* USER CODE END TIM1_CC_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_CC_IRQn 1 */
@@ -188,6 +189,17 @@ void TIM6_IRQHandler(void)
 		cntr_10ms--;
 	if(ms_cntr % 1000 == 0)
 		s_cntr = (s_cntr + 1) % 10;
+	
+	for(uint8_t i = 0; i < 4; i++)
+	{
+		if(Inputs[i].timeoutCntr >= 500)
+			HAL_GPIO_WritePin(Inputs[i].ledPort, Inputs[i].ledPin, GPIO_PIN_RESET);
+		else
+		{
+			Inputs[i].timeoutCntr++;
+			HAL_GPIO_WritePin(Inputs[i].ledPort, Inputs[i].ledPin, GPIO_PIN_SET);
+		}
+	}
 	
 	
 	

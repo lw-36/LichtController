@@ -95,7 +95,7 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+   HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -217,6 +217,7 @@ int main(void)
 						OutputToSet->Override = OutputOROff;
 						HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
 						HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_SET);
+						HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
 						operationState = StateNormal;
 					}
 				break;
@@ -735,8 +736,10 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void restoreConfiguration(void)
 {
-	uint16_t ms10cntr = 0;
+	uint16_t ms10cntr = 25;
+	static bool deleteConf = false;
 	HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_RESET);
 	do
 	{
 		if(ms_cntr % 250 == 0)
@@ -750,8 +753,9 @@ void restoreConfiguration(void)
 				HAL_GPIO_TogglePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin);
 			}
 		}
-		if(ms10cntr + 1 % 800 == 0)
+		if(ms10cntr % 850 == 0 && !deleteConf)
 		{
+			deleteConf = true;
 			HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_RESET);
@@ -765,12 +769,12 @@ void restoreConfiguration(void)
 		}
 		if(ButtonSet.ButtonChanged || ButtonMode.ButtonChanged || ms10cntr >= 900)
 		{
+			deleteConf = false;
 			HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
-			return;
 		}
-	}while(1);
+	}while(deleteConf || ms10cntr <= 850);
 	//Create Sample Configuration
 	//Inputs
 	for(uint8_t i = 0; i < 4; i++)
@@ -778,12 +782,44 @@ void restoreConfiguration(void)
 		Inputs[i].minValueUnscaled = 1000;
 		Inputs[i].maxValueUnscaled = 2000;
 	}
+	Input1->ledPort = IN1_LED_GPIO_Port;
+	Input1->ledPin = IN1_LED_Pin;
+	Input2->ledPort = IN2_LED_GPIO_Port;
+	Input2->ledPin = IN2_LED_Pin;
+	Input3->ledPort = IN3_LED_GPIO_Port;
+	Input3->ledPin = IN3_LED_Pin;
+	Input4->ledPort = IN4_LED_GPIO_Port;
+	Input4->ledPin = IN4_LED_Pin;
+	SaveInputConfig();
 	//Outputs
+	
 	for(uint8_t i = 0; i < 6; i++)
 	{
-		Outputs[i].Mode = Output
+		Outputs[i].time = 2000;
+		Outputs[i].minIntensity = 0;
+		Outputs[i].maxIntensity = 65535;
+		Outputs[i].Mode = OutputDisabled;
+		Outputs[i].dimmInput = 3;
+		Outputs[i].Invert = 0;
+		Outputs[i].ignoreKillswitch = 0;
+		Outputs[i].lowSwitchingValue = 2100;
+		Outputs[i].highSwitchingValue = 4096;
 	}
+	Output1->Mode = OutputOnOff;
+	Output1->assignedInput = 0;
+	Output1->lowSwitchingValue = 2100;
+	Output1->highSwitchingValue = 4096;
 	
+	Output2->Mode = OutputDimm;
+	Output2->dimmInput = 0;
+	Output2->assignedInput = 1;
+	Output2->lowSwitchingValue = 0;
+	Output2->highSwitchingValue = 4096;
+	
+	Output3->Mode = OutputBlink;
+	Output3->SubMode = BlinkAntiColl;
+	Output3->assignedInput = 0;
+	SaveOutputConfig();
 	return;
 }
 

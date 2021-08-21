@@ -27,6 +27,8 @@ void SetOutputsFunc(void)
 			{
 				ButtonMode.ButtonChanged = false;
 				OutputToSet->Override = OutputORNone;
+				if(OutputToSet->Mode == OutputDisabled)
+					__HAL_TIM_SET_COMPARE(OutputToSet->timer, OutputToSet->channel, 0);
 				OutputToSetNumber = (OutputToSetNumber + 1) % 6;
 				OutputToSet = &Outputs[OutputToSetNumber];
 				OutputToSet->Override = OutputORBlinkFast;
@@ -48,17 +50,14 @@ void SetOutputsFunc(void)
 			if(ButtonMode.ButtonChanged)
 			{
 				ButtonMode.ButtonChanged = false;
-				OutputToSet->Mode = (OutputToSet->Mode + 1) % 4;
+				OutputToSet->Mode = (OutputToSet->Mode + 1) % 5;
 			}
 			else if(ButtonSet.ButtonChanged)
 			{
 				ButtonSet.ButtonChanged = false;
 				if(OutputToSet->Mode == OutputBlink || OutputToSet->Mode == OutputOnOff)
 				{
-					if(OutputToSet->Mode == OutputBlink)
-						OutputSetParam = OutputSetBasicSubMode;
-					else
-						OutputSetParam = OutputSetBasicInput;
+					OutputSetParam = OutputSetBasicSubMode;
 					OutputToSet->time = 0;
 				}
 				else
@@ -69,19 +68,34 @@ void SetOutputsFunc(void)
 			}
 			break;
 		case OutputSetBasicSubMode:
-			if(ButtonMode.ButtonChanged)
+			if(OutputToSet->Mode == OutputBlink)
 			{
-				ButtonMode.ButtonChanged = false;
-				if(OutputToSet->Mode == OutputBlink)
+				if(ButtonMode.ButtonChanged)
 				{
+					ButtonMode.ButtonChanged = false;
 					OutputToSet->SubMode = (OutputToSet->SubMode + 1) % 4;
 				}
-				else if(OutputToSet->Mode == OutputOnOff)
+			}
+			else if(OutputToSet->Mode == OutputOnOff)
+			{
+				if(ButtonMode.ButtonPressedLong)
 				{
-					OutputToSet->Fade = !OutputToSet->Fade;
+					ButtonMode.ButtonPressedLong = false;
+					if(OutputToSet->dimmInput != 0)
+					{
+						OutputToSet->dimmInput = 0;
+						OutputToSet->minIntensity = 0;
+					}
+					else
+						OutputToSet->dimmInput = 3;
+				}
+				else if(ButtonMode.ButtonChanged)
+				{
+					ButtonMode.ButtonChanged = false;
+						OutputToSet->dimmInput = (OutputToSet->dimmInput + 1)% 3;
 				}
 			}
-			else if(ButtonSet.ButtonChanged)
+			if(ButtonSet.ButtonChanged)
 			{
 				ButtonSet.ButtonChanged = false;
 				OutputSetParam = OutputSetBasicInput;

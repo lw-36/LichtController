@@ -8,16 +8,6 @@
 
 /****************Typedefs****************/
 //Hardware Types
-
-typedef enum
-{
-	InputNone,
-	InputStandard,
-	InputKillswitch,
-	InputModeswitch,
-	InputModesAmount
-}InputModes_t;
-
 typedef struct
 {
 	uint32_t risingEdge;
@@ -29,7 +19,7 @@ typedef struct
 
 typedef struct
 {
-	InputModes_t Mode;
+	uint16_t timeoutCntr;
 	uint16_t minValueUnscaled;
 	uint16_t maxValueUnscaled;
 	uint16_t unscaledValue;
@@ -44,7 +34,8 @@ typedef enum
 	OutputOnOff,
 	OutputDimm,
 	OutputBlink,
-	OutputFix
+	OutputFix,
+	OutputDisabled
 }OutputModes_t;
 
 typedef enum
@@ -71,8 +62,8 @@ typedef struct
 {
 	OutputModes_t Mode;
 	BlinkPattern_t SubMode;
-	bool Fade;
 	uint8_t assignedInput;
+	uint8_t dimmInput;
 	bool Invert;
 	int16_t lowSwitchingValue;
 	int16_t highSwitchingValue;
@@ -86,6 +77,8 @@ typedef struct
 	bool stateChanged;
 	bool previousState;
 	bool ignoreKillswitch;
+	uint16_t startValue;
+	uint16_t totalDuration;
 }Output_t;
 
 typedef struct
@@ -107,12 +100,6 @@ typedef enum
 	StateSetOutputs
 }OperationStates_t;
 
-typedef enum
-{
-	InputSetNone,
-	InputSetMode,
-	InputSetRange
-}InputSet_t;
 
 typedef enum
 {

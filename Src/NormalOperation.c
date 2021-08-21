@@ -50,35 +50,16 @@ void NormalOperation(void)
 					 //HAL_GPIO_TogglePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin);
 					break;
 				case StateSetInputs:
-					switch(InputSetParam)
+					HAL_GPIO_TogglePin(InputToSet->ledPort, InputToSet->ledPin);
+					if(ms_cntr < blinkMedium)
 					{
-						case InputSetNone:
-							break;
-						case InputSetMode:
-							if(ms_cntr < blinkMedium)
-							{
-								HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_RESET);
-								HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
-							}
-							else
-							{
-								HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_SET);
-								HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_RESET);
-							}
-							break;
-						case InputSetRange:
-							HAL_GPIO_TogglePin(InputToSet->ledPort, InputToSet->ledPin);
-							if(ms_cntr < blinkMedium)
-							{
-								HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_RESET);
-								HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_SET);
-							}
-							else
-							{
-								HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
-								HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
-							}
-							break;
+						HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_RESET);
+						HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_SET);
+					}
+					else
+					{
+						HAL_GPIO_WritePin(UserLED_GN_GPIO_Port, UserLED_GN_Pin, GPIO_PIN_SET);
+						HAL_GPIO_WritePin(UserLED_BL_GPIO_Port, UserLED_BL_Pin, GPIO_PIN_RESET);
 					}
 					break;
 				case StateSetOutputs:
@@ -95,21 +76,7 @@ void NormalOperation(void)
 		{
 			if(operationState == StateSetInputs)
 			{
-				switch(InputSetParam)
-				{
-					case InputSetNone:
-						HAL_GPIO_TogglePin(InputToSet->ledPort, InputToSet->ledPin);
-						break;
-					case InputSetMode:
-						if(ms_cntr <= InputToSet->Mode * blinkFast * 2)
-							HAL_GPIO_TogglePin(InputToSet->ledPort, InputToSet->ledPin);
-						else
-							HAL_GPIO_WritePin(InputToSet->ledPort, InputToSet->ledPin, GPIO_PIN_RESET);
-						break;
-					case InputSetRange:
-						//HAL_GPIO_TogglePin(InputToSet->ledPort, InputToSet->ledPin);
-						break;
-				}
+				HAL_GPIO_TogglePin(InputToSet->ledPort, InputToSet->ledPin);
 			}
 			else if(operationState == StateSetOutputs)
 			{
@@ -151,6 +118,10 @@ void NormalOperation(void)
 					if(OutputToSet->ignoreKillswitch == false)
 						HAL_GPIO_TogglePin(Inputs[3].ledPort, Inputs[3].ledPin);
 				}
+				else if(OutputSetParam == OutputSetBasicSubMode && OutputToSet->Mode == OutputOnOff && OutputToSet->dimmInput != 3)
+				{
+					HAL_GPIO_TogglePin(Inputs[OutputToSet->dimmInput].ledPort, Inputs[OutputToSet->dimmInput].ledPin);
+				}
 			}	
 			for(uint8_t currentOutputNumber = 0; currentOutputNumber < 6; currentOutputNumber++)
 			{
@@ -188,6 +159,9 @@ void NormalOperation(void)
 				case OutputFix:
 					FixHandler(currentOutput);
 					break;
+				case OutputDisabled:
+						__HAL_TIM_SET_COMPARE(currentOutput->timer, currentOutput->channel, 0);
+					break;
 			}
 		}
 		else
@@ -201,19 +175,28 @@ void OnOffHandler(Output_t* Output)
 {
 	bool state;
 	if(Inputs[Output->assignedInput].Value > Output->lowSwitchingValue && Inputs[Output->assignedInput].Value < Output->highSwitchingValue && !Output->Invert)
-		state = false;
-	else
 		state = true;
+	else
+		state = false;
 	
 	if(state != Output->previousState)
 	{
 		Output->stateChanged = true;
 		Output->previousState = state;
+		Output->startValue = __HAL_TIM_GET_COMPARE(Output->timer, Output->channel);
+		if(state == true)
+			Output->totalDuration = ((double)Output->time / (double)(Output->maxIntensity - Output->minIntensity)) * (Output->maxIntensity - Output->startValue);
+		else
+			Output->totalDuration = ((double)Output->time / (double)(Output->maxIntensity - Output->minIntensity)) * (Output->startValue - Output->minIntensity);
 		Output->cntr = 1;
 	}
 	
 	if(Output->stateChanged)
 	{
+		if(Output->dimmInput != 3)
+		{
+			Output->maxIntensity = ((double)Inputs[Output->dimmInput].Value / (double)INPUT_SCALED_RANGE) * (double)65535;
+		}
 		if(Output->time <= 10)
 		{
 			if(state == false)
@@ -223,16 +206,20 @@ void OnOffHandler(Output_t* Output)
 		}
 		else
 		{
-			if(Output->cntr % Output->time == 0)
+			if(Output->cntr % Output->totalDuration == 0)
 			{
 				Output->stateChanged = false;
+				if(state == true)
+					__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, Output->maxIntensity);
+				else
+					__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, Output->minIntensity);
 				return;
 			}
 			uint16_t value;
 			if(state == false)
-				value = Output->maxIntensity - ((double)(Output->maxIntensity - Output->minIntensity)/(double)Output->time * (double)Output->cntr);
+				value = Output->startValue - ((double)(Output->startValue - Output->minIntensity)/(double)Output->totalDuration * (double)Output->cntr);
 			else
-				value = Output->minIntensity + ((double)(Output->maxIntensity - Output->minIntensity)/(double)Output->time * (double)Output->cntr);
+				value = Output->startValue + ((double)(Output->maxIntensity - Output->startValue)/(double)Output->totalDuration * (double)Output->cntr);
 			
 			__HAL_TIM_SET_COMPARE(Output->timer, Output->channel, value);
 		}
