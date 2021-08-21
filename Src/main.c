@@ -779,8 +779,8 @@ void restoreConfiguration(void)
 	//Inputs
 	for(uint8_t i = 0; i < 4; i++)
 	{
-		Inputs[i].minValueUnscaled = 1000;
-		Inputs[i].maxValueUnscaled = 2000;
+		Inputs[i].minValueUnscaled = 1300;
+		Inputs[i].maxValueUnscaled = 1700;
 	}
 	Input1->ledPort = IN1_LED_GPIO_Port;
 	Input1->ledPin = IN1_LED_Pin;
@@ -807,7 +807,7 @@ void restoreConfiguration(void)
 	}
 	Output1->Mode = OutputOnOff;
 	Output1->assignedInput = 0;
-	Output1->lowSwitchingValue = 2100;
+	Output1->lowSwitchingValue = 100;
 	Output1->highSwitchingValue = 4096;
 	
 	Output2->Mode = OutputDimm;

@@ -188,8 +188,8 @@ void SetOutputsFunc(void)
 				if(delValues == false)
 				{
 					delValues = true;
-					OutputToSet->lowSwitchingValue = 4195;
-					OutputToSet->highSwitchingValue = 0;
+					OutputToSet->lowSwitchingValue = 4195 - 8;
+					OutputToSet->highSwitchingValue = 8;
 				}
 				SetOutputInputRange(OutputToSet, &Inputs[OutputToSet->assignedInput]);
 			}
@@ -242,13 +242,13 @@ void SetOutputIntensityRange(Output_t* Output, Input_t* Input, bool SetHighValue
 void SetOutputInputRange(Output_t* Output, Input_t* Input)
 {
 	int16_t currentValue = Input->Value;
-	if(currentValue + 3 > Output->highSwitchingValue)
+	if(currentValue + 8 > Output->highSwitchingValue)
 	{
-		Output->highSwitchingValue = currentValue + 3;
+		Output->highSwitchingValue = currentValue + 8;
 	}
-	else if(currentValue - 3 < Output->lowSwitchingValue)
+	else if(currentValue - 8 < Output->lowSwitchingValue)
 	{
-		Output->lowSwitchingValue = currentValue - 3;
+		Output->lowSwitchingValue = currentValue - 8;
 	}
 }
 

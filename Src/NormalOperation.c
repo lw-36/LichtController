@@ -36,7 +36,11 @@ void NormalOperation(void)
 	{
 		for(uint8_t i = 0; i < 6; i++)
 		{
-			Outputs[i].Override = OutputORNone;
+			if(Outputs[i].Override == OutputOROff)
+			{
+				Outputs[i].Override = OutputORNone;
+				Outputs[i].previousState = false;
+			}
 		}
 	}
 		

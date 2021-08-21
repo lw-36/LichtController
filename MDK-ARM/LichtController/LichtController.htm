@@ -3,7 +3,7 @@
 <title>Static Call Graph - [LichtController\LichtController.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image LichtController\LichtController.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sat Aug 21 11:41:04 2021
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sat Aug 21 16:33:02 2021
 <BR><P>
 <H3>Maximum Stack Usage =        216 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -811,7 +811,7 @@ Global Symbols
 <P><STRONG><a name="[1]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f0xx_it.o(i.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f030x8.o(RESET)
 </UL>
-<P><STRONG><a name="[80]"></a>NormalOperation</STRONG> (Thumb, 776 bytes, Stack size 24 bytes, normaloperation.o(i.NormalOperation))
+<P><STRONG><a name="[80]"></a>NormalOperation</STRONG> (Thumb, 786 bytes, Stack size 24 bytes, normaloperation.o(i.NormalOperation))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = NormalOperation &rArr; OnOffHandler &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; __aeabi_llsl
 </UL>
 <BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_TogglePin
@@ -879,7 +879,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[8e]"></a>SetOutputInputRange</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, setoutputs.o(i.SetOutputInputRange))
+<P><STRONG><a name="[8e]"></a>SetOutputInputRange</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, setoutputs.o(i.SetOutputInputRange))
 <BR><BR>[Called By]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetOutputsFunc
 </UL>
 
@@ -896,7 +896,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetOutputsFunc
 </UL>
 
-<P><STRONG><a name="[8d]"></a>SetOutputsFunc</STRONG> (Thumb, 694 bytes, Stack size 32 bytes, setoutputs.o(i.SetOutputsFunc))
+<P><STRONG><a name="[8d]"></a>SetOutputsFunc</STRONG> (Thumb, 698 bytes, Stack size 32 bytes, setoutputs.o(i.SetOutputsFunc))
 <BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = SetOutputsFunc &rArr; SetOutputIntensityRange &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; __aeabi_llsl
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetOutputIntensityRange
@@ -1045,7 +1045,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> entry9a.o(.ARM.Collect$$$$0000000B)
 </UL>
-<P><STRONG><a name="[93]"></a>restoreConfiguration</STRONG> (Thumb, 404 bytes, Stack size 40 bytes, main.o(i.restoreConfiguration))
+<P><STRONG><a name="[93]"></a>restoreConfiguration</STRONG> (Thumb, 402 bytes, Stack size 40 bytes, main.o(i.restoreConfiguration))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = restoreConfiguration &rArr; SaveOutputConfig &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation &rArr; FLASH_SetErrorCode
 </UL>
 <BR>[Calls]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SaveOutputConfig
