@@ -27,8 +27,7 @@ void SetOutputsFunc(void)
 			{
 				ButtonMode.ButtonChanged = false;
 				OutputToSet->Override = OutputORNone;
-				if(OutputToSet->Mode == OutputDisabled)
-					__HAL_TIM_SET_COMPARE(OutputToSet->timer, OutputToSet->channel, 0);
+				__HAL_TIM_SET_COMPARE(OutputToSet->timer, OutputToSet->channel, 0);
 				OutputToSetNumber = (OutputToSetNumber + 1) % 6;
 				OutputToSet = &Outputs[OutputToSetNumber];
 				OutputToSet->Override = OutputORBlinkFast;

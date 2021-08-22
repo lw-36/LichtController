@@ -21,7 +21,7 @@ void SetInputsFunc(void)
 	{
 		if(ButtonMode.ButtonPressed)
 		{
-			HAL_GPIO_WritePin(InputToSet->ledPort, InputToSet->ledPin, GPIO_PIN_SET);
+			//HAL_GPIO_WritePin(InputToSet->ledPort, InputToSet->ledPin, GPIO_PIN_SET);
 			setInputRange(InputToSet);
 		}
 		else

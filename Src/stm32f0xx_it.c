@@ -192,7 +192,7 @@ void TIM6_IRQHandler(void)
 	
 	for(uint8_t i = 0; i < 4; i++)
 	{
-		if(Inputs[i].timeoutCntr >= 500)
+		if(Inputs[i].timeoutCntr >= 100)
 			HAL_GPIO_WritePin(Inputs[i].ledPort, Inputs[i].ledPin, GPIO_PIN_RESET);
 		else
 		{
@@ -200,8 +200,6 @@ void TIM6_IRQHandler(void)
 			HAL_GPIO_WritePin(Inputs[i].ledPort, Inputs[i].ledPin, GPIO_PIN_SET);
 		}
 	}
-	
-	
 	
 	//Check Buttons
 	ButtonHandler();	

@@ -3,7 +3,7 @@
 <title>Static Call Graph - [LichtController\LichtController.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image LichtController\LichtController.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sat Aug 21 16:33:02 2021
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sun Aug 22 16:40:26 2021
 <BR><P>
 <H3>Maximum Stack Usage =        216 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -402,7 +402,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[14]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM6_IRQHandler
 </UL>
 
-<P><STRONG><a name="[3c]"></a>ButtonPressedLongHandler</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, lichtcontroller.o(i.ButtonPressedLongHandler))
+<P><STRONG><a name="[3c]"></a>ButtonPressedLongHandler</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, lichtcontroller.o(i.ButtonPressedLongHandler))
 <BR><BR>[Called By]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ButtonHandler
 </UL>
 
@@ -519,7 +519,6 @@ Global Symbols
 <LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NormalOperation
-<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetInputsFunc
 <LI><a href="#[3d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ConfigInputs
 </UL>
 
@@ -811,7 +810,7 @@ Global Symbols
 <P><STRONG><a name="[1]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f0xx_it.o(i.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f030x8.o(RESET)
 </UL>
-<P><STRONG><a name="[80]"></a>NormalOperation</STRONG> (Thumb, 786 bytes, Stack size 24 bytes, normaloperation.o(i.NormalOperation))
+<P><STRONG><a name="[80]"></a>NormalOperation</STRONG> (Thumb, 814 bytes, Stack size 24 bytes, normaloperation.o(i.NormalOperation))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = NormalOperation &rArr; OnOffHandler &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; __aeabi_llsl
 </UL>
 <BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_TogglePin
@@ -870,11 +869,10 @@ Global Symbols
 <LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[8a]"></a>SetInputsFunc</STRONG> (Thumb, 74 bytes, Stack size 16 bytes, setinputs.o(i.SetInputsFunc))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = SetInputsFunc
+<P><STRONG><a name="[8a]"></a>SetInputsFunc</STRONG> (Thumb, 62 bytes, Stack size 12 bytes, setinputs.o(i.SetInputsFunc))
+<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = SetInputsFunc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;setInputRange
-<LI><a href="#[3f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -896,7 +894,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetOutputsFunc
 </UL>
 
-<P><STRONG><a name="[8d]"></a>SetOutputsFunc</STRONG> (Thumb, 698 bytes, Stack size 32 bytes, setoutputs.o(i.SetOutputsFunc))
+<P><STRONG><a name="[8d]"></a>SetOutputsFunc</STRONG> (Thumb, 692 bytes, Stack size 32 bytes, setoutputs.o(i.SetOutputsFunc))
 <BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = SetOutputsFunc &rArr; SetOutputIntensityRange &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; __aeabi_llsl
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetOutputIntensityRange
@@ -952,7 +950,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f030x8.o(RESET)
 </UL>
-<P><STRONG><a name="[14]"></a>TIM6_IRQHandler</STRONG> (Thumb, 124 bytes, Stack size 16 bytes, stm32f0xx_it.o(i.TIM6_IRQHandler))
+<P><STRONG><a name="[14]"></a>TIM6_IRQHandler</STRONG> (Thumb, 120 bytes, Stack size 16 bytes, stm32f0xx_it.o(i.TIM6_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = TIM6_IRQHandler &rArr; ButtonHandler
 </UL>
 <BR>[Calls]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_IRQHandler
@@ -1045,7 +1043,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> entry9a.o(.ARM.Collect$$$$0000000B)
 </UL>
-<P><STRONG><a name="[93]"></a>restoreConfiguration</STRONG> (Thumb, 402 bytes, Stack size 40 bytes, main.o(i.restoreConfiguration))
+<P><STRONG><a name="[93]"></a>restoreConfiguration</STRONG> (Thumb, 412 bytes, Stack size 40 bytes, main.o(i.restoreConfiguration))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = restoreConfiguration &rArr; SaveOutputConfig &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation &rArr; FLASH_SetErrorCode
 </UL>
 <BR>[Calls]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SaveOutputConfig

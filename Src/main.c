@@ -742,6 +742,8 @@ void restoreConfiguration(void)
 	HAL_GPIO_WritePin(UserLED_RD_GPIO_Port, UserLED_RD_Pin, GPIO_PIN_RESET);
 	do
 	{
+		while(ms_cntr == ms_cntr_old);
+		ms_cntr_old = ms_cntr;
 		if(ms_cntr % 250 == 0)
 		{
 			ms10cntr += 25;
@@ -795,7 +797,7 @@ void restoreConfiguration(void)
 	
 	for(uint8_t i = 0; i < 6; i++)
 	{
-		Outputs[i].time = 2000;
+		Outputs[i].time = 1200;
 		Outputs[i].minIntensity = 0;
 		Outputs[i].maxIntensity = 65535;
 		Outputs[i].Mode = OutputDisabled;

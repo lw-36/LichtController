@@ -153,6 +153,7 @@ void ButtonPressedLongHandler(Button_t* Button)
 		if(Button->ButtonPressedCounter >= BUTTON_PRESSED_LONG_DURATION)
 		{
 			Button->ButtonPressedLong = true;
+			Button->ButtonFlag = false;
 			Button->ButtonPressedCounter = 0;
 		}
 	}

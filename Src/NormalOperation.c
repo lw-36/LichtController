@@ -126,6 +126,20 @@ void NormalOperation(void)
 				{
 					HAL_GPIO_TogglePin(Inputs[OutputToSet->dimmInput].ledPort, Inputs[OutputToSet->dimmInput].ledPin);
 				}
+				else if(OutputSetParam == OutputSetBasicMode)
+				{
+					if(ms_cntr <= OutputToSet->Mode * blinkFast * 2)
+						OutputToSet->Override = OutputORBlinkFast;
+					else
+						OutputToSet->Override = OutputOROff;
+				}
+				else if(OutputSetParam == OutputSetBasicSubMode && OutputToSet->Mode == OutputBlink)
+				{
+					if(ms_cntr <= OutputToSet->SubMode * blinkFast * 2)
+						OutputToSet->Override = OutputORBlinkFast;
+					else
+						OutputToSet->Override = OutputOROff;
+				}					
 			}	
 			for(uint8_t currentOutputNumber = 0; currentOutputNumber < 6; currentOutputNumber++)
 			{
