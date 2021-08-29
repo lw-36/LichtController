@@ -55,7 +55,8 @@ typedef enum
 	OutputORBlinkMedium,
 	OutputORBlinkSlow,
 	OutputORMin,
-	OutputORMax
+	OutputORMax,
+	OutputORSetting
 }OutputOverride_t;
 
 typedef struct

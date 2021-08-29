@@ -139,7 +139,9 @@ void NormalOperation(void)
 						OutputToSet->Override = OutputORBlinkFast;
 					else
 						OutputToSet->Override = OutputOROff;
-				}					
+				}
+				else if(OutputSetParam == OutputSetBasicMode)
+					OutputToSet->Override = OutputORSetting;
 			}	
 			for(uint8_t currentOutputNumber = 0; currentOutputNumber < 6; currentOutputNumber++)
 			{
@@ -169,7 +171,7 @@ void NormalOperation(void)
 					DimmHandler(currentOutput);
 					break;
 				case OutputBlink:
-					if((Inputs[currentOutput->assignedInput].Value > currentOutput->lowSwitchingValue && Inputs[currentOutput->assignedInput].Value < currentOutput->highSwitchingValue) ^ currentOutput->Invert)
+					if(((Inputs[currentOutput->assignedInput].Value > currentOutput->lowSwitchingValue && Inputs[currentOutput->assignedInput].Value < currentOutput->highSwitchingValue) && !currentOutput->Invert) || OutputToSet->Override == OutputORSetting)
 						BlinkHandler(currentOutput);
 					else
 						__HAL_TIM_SET_COMPARE(currentOutput->timer, currentOutput->channel, currentOutput->minIntensity);
@@ -192,7 +194,7 @@ void NormalOperation(void)
 void OnOffHandler(Output_t* Output)
 {
 	bool state;
-	if(Inputs[Output->assignedInput].Value > Output->lowSwitchingValue && Inputs[Output->assignedInput].Value < Output->highSwitchingValue && !Output->Invert)
+	if((Inputs[Output->assignedInput].Value > Output->lowSwitchingValue && Inputs[Output->assignedInput].Value < Output->highSwitchingValue && !Output->Invert) || Output->Override == OutputORSetting)
 		state = true;
 	else
 		state = false;
@@ -246,7 +248,11 @@ void OnOffHandler(Output_t* Output)
 
 void DimmHandler(Output_t* Output)
 {
-	uint16_t value = (double)Inputs[Output->assignedInput].Value / (double)INPUT_SCALED_RANGE * (double)(Output->maxIntensity - Output->minIntensity);
+	uint16_t value = 0;
+	if(Output->Override == OutputORSetting)
+		value = (Output->maxIntensity + Output->minIntensity) / 2;
+	else
+		value = (double)Inputs[Output->assignedInput].Value / (double)INPUT_SCALED_RANGE * (double)(Output->maxIntensity - Output->minIntensity);
 	if(Output->Invert)
 		value = (Output->maxIntensity - Output->minIntensity) - value;
 	value += Output->minIntensity;
