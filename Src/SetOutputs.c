@@ -49,7 +49,7 @@ void SetOutputsFunc(void)
 			if(ButtonMode.ButtonChanged)
 			{
 				ButtonMode.ButtonChanged = false;
-				OutputToSet->Mode = (OutputToSet->Mode + 1) % 5;
+				OutputToSet->Mode = (OutputToSet->Mode + 1) % 4;
 			}
 			else if(ButtonSet.ButtonChanged)
 			{
@@ -57,7 +57,10 @@ void SetOutputsFunc(void)
 				if(OutputToSet->Mode == OutputBlink || OutputToSet->Mode == OutputOnOff)
 				{
 					OutputSetParam = OutputSetBasicSubMode;
-					OutputToSet->time = 0;
+					if(OutputToSet->Mode == OutputOnOff)
+						OutputToSet->time = 0;
+					else
+						OutputToSet->time = 2000;
 				}
 				else
 				{
@@ -86,7 +89,10 @@ void SetOutputsFunc(void)
 						OutputToSet->minIntensity = 0;
 					}
 					else
+					{
 						OutputToSet->dimmInput = 3;
+						OutputToSet->maxIntensity = 65535;
+					}
 				}
 				else if(ButtonMode.ButtonChanged)
 				{
@@ -104,8 +110,10 @@ void SetOutputsFunc(void)
 			if(ButtonMode.ButtonChanged)
 			{
 				ButtonMode.ButtonChanged = false;
-				HAL_GPIO_WritePin(Inputs[OutputToSet->assignedInput].ledPort, Inputs[OutputToSet->assignedInput].ledPin, GPIO_PIN_RESET);
-				OutputToSet->assignedInput = (OutputToSet->assignedInput + 1) % 3;
+				HAL_GPIO_WritePin(Input1->ledPort, Input1->ledPin, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(Input2->ledPort, Input1->ledPin, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(Input3->ledPort, Input1->ledPin, GPIO_PIN_RESET);
+				OutputToSet->assignedInput = (OutputToSet->assignedInput + 1) % 4;
 			}
 			else if(ButtonSet.ButtonChanged)
 			{
@@ -116,7 +124,7 @@ void SetOutputsFunc(void)
 					OutputToSet->lowSwitchingValue = 0;
 					OutputToSet->highSwitchingValue = 4195;
 				}
-				else if(OutputToSet->Mode != OutputFix)
+				else
 				{
 					OutputToSet->lowSwitchingValue = 2048;
 					OutputToSet->highSwitchingValue = 4195;
@@ -182,6 +190,12 @@ void SetOutputsFunc(void)
 			}
 			break;
 		case OutputSetAdvInputRange:
+			if(OutputToSet->assignedInput == 3)
+			{
+				OutputSetParam = OutputSetAdvPolarity;
+				break;
+			}
+				
 			if(ButtonMode.ButtonPressed)
 			{
 				if(delValues == false)

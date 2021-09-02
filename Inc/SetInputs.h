@@ -12,6 +12,7 @@
 
 /***************Variables***************/
 extern Input_t* InputToSet;
+extern uint8_t InputToSetNumber;
 
 /**********Function Prototypes**********/
 void SetInputsFunc(void);

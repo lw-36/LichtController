@@ -34,7 +34,6 @@ typedef enum
 	OutputOnOff,
 	OutputDimm,
 	OutputBlink,
-	OutputFix,
 	OutputDisabled
 }OutputModes_t;
 

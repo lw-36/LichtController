@@ -822,6 +822,11 @@ void restoreConfiguration(void)
 	Output3->SubMode = BlinkAntiColl;
 	Output3->assignedInput = 0;
 	SaveOutputConfig();
+	do
+	{
+		HAL_Delay(1);
+	}while(ButtonSet.ButtonPressed || ButtonMode.ButtonPressed);
+	HAL_NVIC_SystemReset();
 	return;
 }
 

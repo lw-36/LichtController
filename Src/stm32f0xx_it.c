@@ -192,12 +192,18 @@ void TIM6_IRQHandler(void)
 	
 	for(uint8_t i = 0; i < 4; i++)
 	{
-		if(Inputs[i].timeoutCntr >= 100)
-			HAL_GPIO_WritePin(Inputs[i].ledPort, Inputs[i].ledPin, GPIO_PIN_RESET);
-		else
+		/*if(operationState == StateNormal
+			 || (operationState == StateSetInputs && i != InputToSetNumber)
+			 || (operationState == StateSetOutputs &&  i == 3 && (OutputSetParam != OutputSetBasicInput || (i != OutputToSet->assignedInput && OutputToSet->assignedInput != 3))))*/
+		if(operationState == StateNormal)
 		{
-			Inputs[i].timeoutCntr++;
-			HAL_GPIO_WritePin(Inputs[i].ledPort, Inputs[i].ledPin, GPIO_PIN_SET);
+			if(Inputs[i].timeoutCntr >= 100)
+				HAL_GPIO_WritePin(Inputs[i].ledPort, Inputs[i].ledPin, GPIO_PIN_RESET);
+			else
+			{
+				Inputs[i].timeoutCntr++;
+				HAL_GPIO_WritePin(Inputs[i].ledPort, Inputs[i].ledPin, GPIO_PIN_SET);
+			}
 		}
 	}
 	

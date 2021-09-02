@@ -13,6 +13,7 @@
 /***************Variables***************/
 extern OutputSet_t OutputSetParam;
 extern Output_t* OutputToSet;
+extern uint8_t OutputToSetNumber;
 
 /**********Function Prototypes**********/
 void SetOutputsFunc(void);

@@ -118,7 +118,14 @@ void NormalOperation(void)
 				}
 				if(OutputSetParam == OutputSetBasicInput)
 				{
-					HAL_GPIO_TogglePin(Inputs[OutputToSet->assignedInput].ledPort, Inputs[OutputToSet->assignedInput].ledPin);
+					if(OutputToSet->assignedInput != 3)
+						HAL_GPIO_TogglePin(Inputs[OutputToSet->assignedInput].ledPort, Inputs[OutputToSet->assignedInput].ledPin);
+					else
+					{
+						HAL_GPIO_TogglePin(Input1->ledPort, Input1->ledPin);
+						HAL_GPIO_TogglePin(Input2->ledPort, Input2->ledPin);
+						HAL_GPIO_TogglePin(Input3->ledPort, Input3->ledPin);
+					}
 					if(OutputToSet->ignoreKillswitch == false)
 						HAL_GPIO_TogglePin(Inputs[3].ledPort, Inputs[3].ledPin);
 				}
@@ -134,13 +141,13 @@ void NormalOperation(void)
 						OutputToSet->Override = OutputOROff;
 				}
 				else if(OutputSetParam == OutputSetBasicSubMode && OutputToSet->Mode == OutputBlink)
-				{
+				/*{
 					if(ms_cntr <= OutputToSet->SubMode * blinkFast * 2)
 						OutputToSet->Override = OutputORBlinkFast;
 					else
 						OutputToSet->Override = OutputOROff;
 				}
-				else if(OutputSetParam == OutputSetBasicMode)
+				else if(OutputSetParam == OutputSetBasicMode)*/
 					OutputToSet->Override = OutputORSetting;
 			}	
 			for(uint8_t currentOutputNumber = 0; currentOutputNumber < 6; currentOutputNumber++)
@@ -160,7 +167,7 @@ void NormalOperation(void)
 	{
 		currentOutput = &Outputs[currentOutputNumber];
 		currentOutput->cntr = (currentOutput->cntr + 1) % currentOutput->time;
-		if(currentOutput->Override == OutputORNone)
+		if(currentOutput->Override == OutputORNone || currentOutput->Override == OutputORSetting)
 		{
 			switch(currentOutput->Mode)
 			{
@@ -171,13 +178,12 @@ void NormalOperation(void)
 					DimmHandler(currentOutput);
 					break;
 				case OutputBlink:
-					if(((Inputs[currentOutput->assignedInput].Value > currentOutput->lowSwitchingValue && Inputs[currentOutput->assignedInput].Value < currentOutput->highSwitchingValue) && !currentOutput->Invert) || OutputToSet->Override == OutputORSetting)
+					if(((Inputs[currentOutput->assignedInput].Value > currentOutput->lowSwitchingValue && Inputs[currentOutput->assignedInput].Value < currentOutput->highSwitchingValue) && !currentOutput->Invert)
+							|| currentOutput->Override == OutputORSetting
+							|| (currentOutput->assignedInput == 3 && !currentOutput->Invert))
 						BlinkHandler(currentOutput);
 					else
 						__HAL_TIM_SET_COMPARE(currentOutput->timer, currentOutput->channel, currentOutput->minIntensity);
-					break;
-				case OutputFix:
-					FixHandler(currentOutput);
 					break;
 				case OutputDisabled:
 						__HAL_TIM_SET_COMPARE(currentOutput->timer, currentOutput->channel, 0);
@@ -194,7 +200,8 @@ void NormalOperation(void)
 void OnOffHandler(Output_t* Output)
 {
 	bool state;
-	if((Inputs[Output->assignedInput].Value > Output->lowSwitchingValue && Inputs[Output->assignedInput].Value < Output->highSwitchingValue && !Output->Invert) || Output->Override == OutputORSetting)
+	if((Inputs[Output->assignedInput].Value > Output->lowSwitchingValue && Inputs[Output->assignedInput].Value < Output->highSwitchingValue && !Output->Invert)
+			|| (currentOutput->assignedInput == 3 && !currentOutput->Invert))
 		state = true;
 	else
 		state = false;
@@ -249,10 +256,10 @@ void OnOffHandler(Output_t* Output)
 void DimmHandler(Output_t* Output)
 {
 	uint16_t value = 0;
-	if(Output->Override == OutputORSetting)
+/*	if(Output->Override == OutputORSetting)
 		value = (Output->maxIntensity + Output->minIntensity) / 2;
-	else
-		value = (double)Inputs[Output->assignedInput].Value / (double)INPUT_SCALED_RANGE * (double)(Output->maxIntensity - Output->minIntensity);
+	else*/
+	value = (double)Inputs[Output->assignedInput].Value / (double)INPUT_SCALED_RANGE * (double)(Output->maxIntensity - Output->minIntensity);
 	if(Output->Invert)
 		value = (Output->maxIntensity - Output->minIntensity) - value;
 	value += Output->minIntensity;
