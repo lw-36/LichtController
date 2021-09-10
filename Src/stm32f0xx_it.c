@@ -134,44 +134,48 @@ void TIM1_BRK_UP_TRG_COM_IRQHandler(void)
   */
 void TIM1_CC_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM1_CC_IRQn 0 */
-	Input_t* CurrentInput;
-	if(TIM1->SR&TIM_FLAG_CC1)
-		CurrentInput = Input1;
-	else if(TIM1->SR&TIM_FLAG_CC2)
-		CurrentInput = Input2;
-	else if(TIM1->SR&TIM_FLAG_CC3)
-		CurrentInput = Input3;
-	else if(TIM1->SR&TIM_FLAG_CC4)
-		CurrentInput = Input4;
-	else return;
-	
-	
-	if(CurrentInput->LLInput.risingEdgeNext)
+  
+	/* USER CODE BEGIN TIM1_CC_IRQn 0 */
+	do
 	{
-		CurrentInput->LLInput.risingEdge = HAL_TIM_ReadCapturedValue(CurrentInput->LLInput.timer, CurrentInput->LLInput.channel);
-		__HAL_TIM_SET_CAPTUREPOLARITY(CurrentInput->LLInput.timer, CurrentInput->LLInput.channel, TIM_INPUTCHANNELPOLARITY_FALLING);
-		CurrentInput->LLInput.risingEdgeNext = false;
-	}
-	else
-	{
-		CurrentInput->LLInput.fallingEdge = HAL_TIM_ReadCapturedValue(CurrentInput->LLInput.timer, CurrentInput->LLInput.channel);
-		__HAL_TIM_SET_CAPTUREPOLARITY(CurrentInput->LLInput.timer, CurrentInput->LLInput.channel, TIM_INPUTCHANNELPOLARITY_RISING);
-		CurrentInput->LLInput.risingEdgeNext = true;
+		Input_t* CurrentInput;
+		if(TIM1->SR&TIM_FLAG_CC1)
+			CurrentInput = Input1;
+		else if(TIM1->SR&TIM_FLAG_CC2)
+			CurrentInput = Input2;
+		else if(TIM1->SR&TIM_FLAG_CC3)
+			CurrentInput = Input3;
+		else if(TIM1->SR&TIM_FLAG_CC4)
+			CurrentInput = Input4;
+		else return;
 		
-		if(CurrentInput->LLInput.fallingEdge < CurrentInput->LLInput.risingEdge)
-			CurrentInput->LLInput.fallingEdge += 0x10000;
-		CurrentInput->unscaledValue = CurrentInput->LLInput.fallingEdge - CurrentInput->LLInput.risingEdge;
 		
-		CurrentInput->Value = (double)(CurrentInput->unscaledValue - CurrentInput->minValueUnscaled) / (double)((CurrentInput->maxValueUnscaled) - (CurrentInput->minValueUnscaled)) * (double)(INPUT_SCALED_RANGE);
-			if(CurrentInput->Value < 0)
-				CurrentInput->Value = 0;
-			else if(CurrentInput->Value >= INPUT_SCALED_RANGE)
-				CurrentInput->Value = INPUT_SCALED_RANGE;
-	}
-	CurrentInput->timeoutCntr = 0;
+		if(CurrentInput->LLInput.risingEdgeNext)
+		{
+			CurrentInput->LLInput.risingEdge = HAL_TIM_ReadCapturedValue(CurrentInput->LLInput.timer, CurrentInput->LLInput.channel);
+			__HAL_TIM_SET_CAPTUREPOLARITY(CurrentInput->LLInput.timer, CurrentInput->LLInput.channel, TIM_INPUTCHANNELPOLARITY_FALLING);
+			CurrentInput->LLInput.risingEdgeNext = false;
+		}
+		else
+		{
+			CurrentInput->LLInput.fallingEdge = HAL_TIM_ReadCapturedValue(CurrentInput->LLInput.timer, CurrentInput->LLInput.channel);
+			__HAL_TIM_SET_CAPTUREPOLARITY(CurrentInput->LLInput.timer, CurrentInput->LLInput.channel, TIM_INPUTCHANNELPOLARITY_RISING);
+			CurrentInput->LLInput.risingEdgeNext = true;
+			
+			if(CurrentInput->LLInput.fallingEdge < CurrentInput->LLInput.risingEdge)
+				CurrentInput->LLInput.fallingEdge += 0x10000;
+			CurrentInput->unscaledValue = CurrentInput->LLInput.fallingEdge - CurrentInput->LLInput.risingEdge;
+			
+			CurrentInput->Value = (double)(CurrentInput->unscaledValue - CurrentInput->minValueUnscaled) / (double)((CurrentInput->maxValueUnscaled) - (CurrentInput->minValueUnscaled)) * (double)(INPUT_SCALED_RANGE);
+				if(CurrentInput->Value < 0)
+					CurrentInput->Value = 0;
+				else if(CurrentInput->Value >= INPUT_SCALED_RANGE)
+					CurrentInput->Value = INPUT_SCALED_RANGE;
+		}
+		CurrentInput->timeoutCntr = 0;
+	}while(TIM1->SR&TIM_FLAG_CC1 || TIM1->SR&TIM_FLAG_CC2 || TIM1->SR&TIM_FLAG_CC3 || TIM1->SR&TIM_FLAG_CC4);
   /* USER CODE END TIM1_CC_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim1);
+	HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_CC_IRQn 1 */
 
   /* USER CODE END TIM1_CC_IRQn 1 */
