@@ -58,7 +58,7 @@ void SetOutputsFunc(void)
 				{
 					OutputSetParam = OutputSetBasicSubMode;
 					if(OutputToSet->Mode == OutputOnOff)
-						OutputToSet->time = 0;
+						OutputToSet->time = 100;
 					else
 						OutputToSet->time = 2000;
 				}
@@ -119,6 +119,10 @@ void SetOutputsFunc(void)
 			{
 				ButtonSet.ButtonChanged = false;
 				HAL_GPIO_WritePin(Inputs[OutputToSet->assignedInput].ledPort, Inputs[OutputToSet->assignedInput].ledPin, GPIO_PIN_SET);
+					HAL_GPIO_WritePin(Input1->ledPort, Input1->ledPin, GPIO_PIN_RESET);
+					HAL_GPIO_WritePin(Input2->ledPort, Input2->ledPin, GPIO_PIN_RESET);
+					HAL_GPIO_WritePin(Input3->ledPort, Input3->ledPin, GPIO_PIN_RESET);
+					HAL_GPIO_WritePin(Input4->ledPort, Input4->ledPin, GPIO_PIN_RESET);
 				if(OutputToSet->Mode == OutputDimm)
 				{
 					OutputToSet->lowSwitchingValue = 0;

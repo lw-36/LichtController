@@ -178,9 +178,9 @@ void NormalOperation(void)
 					DimmHandler(currentOutput);
 					break;
 				case OutputBlink:
-					if(((Inputs[currentOutput->assignedInput].Value > currentOutput->lowSwitchingValue && Inputs[currentOutput->assignedInput].Value < currentOutput->highSwitchingValue) && !currentOutput->Invert)
+					if(((Inputs[currentOutput->assignedInput].Value > currentOutput->lowSwitchingValue && Inputs[currentOutput->assignedInput].Value < currentOutput->highSwitchingValue) != currentOutput->Invert)
 							|| currentOutput->Override == OutputORSetting
-							|| (currentOutput->assignedInput == 3 && !currentOutput->Invert))
+							|| (currentOutput->assignedInput == 3 != currentOutput->Invert))
 						BlinkHandler(currentOutput);
 					else
 						__HAL_TIM_SET_COMPARE(currentOutput->timer, currentOutput->channel, currentOutput->minIntensity);
@@ -200,7 +200,7 @@ void NormalOperation(void)
 void OnOffHandler(Output_t* Output)
 {
 	bool state;
-	if((Inputs[Output->assignedInput].Value > Output->lowSwitchingValue && Inputs[Output->assignedInput].Value < Output->highSwitchingValue && !Output->Invert)
+	if((Inputs[Output->assignedInput].Value > Output->lowSwitchingValue && Inputs[Output->assignedInput].Value < Output->highSwitchingValue != Output->Invert)
 			|| (currentOutput->assignedInput == 3 && !currentOutput->Invert))
 		state = true;
 	else
