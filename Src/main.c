@@ -810,10 +810,9 @@ void restoreConfiguration(void)
 	Output1->Mode = OutputOnOff;
 	Output1->assignedInput = 0;
 	Output1->lowSwitchingValue = 100;
-	Output1->highSwitchingValue = 4096;
+	Output1->highSwitchingValue = 4096; 
 	
 	Output2->Mode = OutputDimm;
-	Output2->dimmInput = 0;
 	Output2->assignedInput = 1;
 	Output2->lowSwitchingValue = 0;
 	Output2->highSwitchingValue = 4096;
